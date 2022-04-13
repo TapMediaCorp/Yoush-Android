@@ -8,6 +8,6 @@ package org.whispersystems.signalservice.api.push.exceptions;
 
 public class NotFoundException extends NonSuccessfulResponseCodeException {
   public NotFoundException(String s) {
-    super(404, s);
+    super(s);
   }
 }

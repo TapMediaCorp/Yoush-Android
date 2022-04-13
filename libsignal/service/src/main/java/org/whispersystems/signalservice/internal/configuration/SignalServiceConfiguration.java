@@ -13,12 +13,10 @@ public final class SignalServiceConfiguration {
   private final SignalServiceUrl[]           signalServiceUrls;
   private final Map<Integer, SignalCdnUrl[]> signalCdnUrlMap;
   private final SignalContactDiscoveryUrl[]  signalContactDiscoveryUrls;
-  private final SignalCdshUrl[]              signalCdshUrls;
   private final SignalKeyBackupServiceUrl[]  signalKeyBackupServiceUrls;
   private final SignalStorageUrl[]           signalStorageUrls;
   private final List<Interceptor>            networkInterceptors;
   private final Optional<Dns>                dns;
-  private final Optional<SignalProxy>        proxy;
   private final byte[]                       zkGroupServerPublicParams;
 
   public SignalServiceConfiguration(SignalServiceUrl[] signalServiceUrls,
@@ -26,21 +24,17 @@ public final class SignalServiceConfiguration {
                                     SignalContactDiscoveryUrl[] signalContactDiscoveryUrls,
                                     SignalKeyBackupServiceUrl[] signalKeyBackupServiceUrls,
                                     SignalStorageUrl[] signalStorageUrls,
-                                    SignalCdshUrl[] signalCdshUrls,
                                     List<Interceptor> networkInterceptors,
                                     Optional<Dns> dns,
-                                    Optional<SignalProxy> proxy,
                                     byte[] zkGroupServerPublicParams)
   {
     this.signalServiceUrls          = signalServiceUrls;
     this.signalCdnUrlMap            = signalCdnUrlMap;
     this.signalContactDiscoveryUrls = signalContactDiscoveryUrls;
-    this.signalCdshUrls             = signalCdshUrls;
     this.signalKeyBackupServiceUrls = signalKeyBackupServiceUrls;
     this.signalStorageUrls          = signalStorageUrls;
     this.networkInterceptors        = networkInterceptors;
     this.dns                        = dns;
-    this.proxy                      = proxy;
     this.zkGroupServerPublicParams  = zkGroupServerPublicParams;
   }
 
@@ -54,10 +48,6 @@ public final class SignalServiceConfiguration {
 
   public SignalContactDiscoveryUrl[] getSignalContactDiscoveryUrls() {
     return signalContactDiscoveryUrls;
-  }
-
-  public SignalCdshUrl[] getSignalCdshUrls() {
-    return signalCdshUrls;
   }
 
   public SignalKeyBackupServiceUrl[] getSignalKeyBackupServiceUrls() {
@@ -78,9 +68,5 @@ public final class SignalServiceConfiguration {
 
   public byte[] getZkGroupServerPublicParams() {
     return zkGroupServerPublicParams;
-  }
-
-  public Optional<SignalProxy> getSignalProxy() {
-    return proxy;
   }
 }

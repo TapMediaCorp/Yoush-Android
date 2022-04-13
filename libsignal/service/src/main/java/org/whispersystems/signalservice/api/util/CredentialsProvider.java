@@ -6,10 +6,11 @@
 
 package org.whispersystems.signalservice.api.util;
 
-import org.whispersystems.signalservice.api.push.ACI;
+import java.util.UUID;
 
 public interface CredentialsProvider {
-  ACI getAci();
-  String getE164();
-  String getPassword();
+  public UUID getUuid();
+  public String getE164();
+  public String getPassword();
+  public String getSignalingKey();
 }

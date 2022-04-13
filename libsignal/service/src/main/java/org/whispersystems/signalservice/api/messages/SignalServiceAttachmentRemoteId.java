@@ -3,7 +3,6 @@ package org.whispersystems.signalservice.api.messages;
 import org.signal.libsignal.metadata.ProtocolInvalidMessageException;
 import org.whispersystems.libsignal.InvalidMessageException;
 import org.whispersystems.libsignal.util.guava.Optional;
-import org.whispersystems.signalservice.api.InvalidMessageStructureException;
 import org.whispersystems.signalservice.internal.push.SignalServiceProtos.AttachmentPointer;
 
 /**
@@ -44,14 +43,14 @@ public final class SignalServiceAttachmentRemoteId {
         }
     }
 
-    public static SignalServiceAttachmentRemoteId from(AttachmentPointer attachmentPointer) throws InvalidMessageStructureException {
+    public static SignalServiceAttachmentRemoteId from(AttachmentPointer attachmentPointer) throws ProtocolInvalidMessageException {
         switch (attachmentPointer.getAttachmentIdentifierCase()) {
             case CDNID:
                 return new SignalServiceAttachmentRemoteId(attachmentPointer.getCdnId());
             case CDNKEY:
                 return new SignalServiceAttachmentRemoteId(attachmentPointer.getCdnKey());
             case ATTACHMENTIDENTIFIER_NOT_SET:
-                throw new InvalidMessageStructureException("AttachmentPointer CDN location not set");
+                throw new ProtocolInvalidMessageException(new InvalidMessageException("AttachmentPointer CDN location not set"), null, 0);
         }
         return null;
     }

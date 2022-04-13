@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/preference_divider"
+    android:background="?pref_divider"
     android:fillViewport="true"
     android:paddingTop="0dp"
-    tools:context="org.thoughtcrime.securesms.groups.ui.invitesandrequests.invited.PendingMemberInvitesFragment">
+    tools:context="com.tapmedia.yoush.groups.ui.pendingmemberinvites.PendingMemberInvitesFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/pendingmemberinvites"
@@ -31,7 +31,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="8dp"
                     android:text="@string/PendingMembersActivity_people_you_invited" />
@@ -50,7 +50,7 @@
                     android:visibility="gone"
                     tools:visibility="visible" />
 
-                <org.thoughtcrime.securesms.groups.ui.GroupMemberListView
+                <com.tapmedia.yoush.groups.ui.GroupMemberListView
                     android:id="@+id/members_you_invited"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
                     android:visibility="gone"
                     tools:visibility="visible" />
 
-                <org.thoughtcrime.securesms.groups.ui.GroupMemberListView
+                <com.tapmedia.yoush.groups.ui.GroupMemberListView
                     android:id="@+id/members_others_invited"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -8,7 +8,7 @@ syntax = "proto2";
 
 package signal;
 
-option java_package         = "org.thoughtcrime.securesms.backup";
+option java_package         = "com.tapmedia.yoush.backup";
 option java_outer_classname = "BackupProtos";
 
 message SqlStatement {
@@ -25,12 +25,9 @@ message SqlStatement {
 }
 
 message SharedPreference {
-    optional string file             = 1;
-    optional string key              = 2;
-    optional string value            = 3;
-    optional bool   booleanValue     = 4;
-    repeated string stringSetValue   = 5;
-    optional bool   isStringSetValue = 6;
+    optional string file  = 1;
+    optional string key   = 2;
+    optional string value = 3;
 }
 
 message Attachment {
@@ -59,16 +56,6 @@ message Header {
     optional bytes salt = 2;
 }
 
-message KeyValue {
-    optional string key          = 1;
-    optional bytes  blobValue    = 2;
-    optional bool   booleanValue = 3;
-    optional float  floatValue   = 4;
-    optional int32  integerValue = 5;
-    optional int64  longValue    = 6;
-    optional string stringValue  = 7;
-}
-
 message BackupFrame {
     optional Header           header     = 1;
     optional SqlStatement     statement  = 2;
@@ -78,5 +65,4 @@ message BackupFrame {
     optional bool             end        = 6;
     optional Avatar           avatar     = 7;
     optional Sticker          sticker    = 8;
-    optional KeyValue         keyValue   = 9;
 }

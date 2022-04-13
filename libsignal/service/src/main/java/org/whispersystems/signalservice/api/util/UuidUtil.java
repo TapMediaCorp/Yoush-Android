@@ -27,10 +27,6 @@ public final class UuidUtil {
     return isUuid(uuid) ? parseOrThrow(uuid) : null;
   }
 
-  public static UUID parseOrUnknown(String uuid) {
-    return uuid == null || uuid.isEmpty() ? UNKNOWN_UUID : parseOrThrow(uuid);
-  }
-
   public static UUID parseOrThrow(String uuid) {
     return UUID.fromString(uuid);
   }
@@ -67,12 +63,7 @@ public final class UuidUtil {
     return parseOrNull(bytes.toByteArray());
   }
 
-  public static UUID fromByteStringOrUnknown(ByteString bytes) {
-    UUID uuid = fromByteStringOrNull(bytes);
-    return uuid != null ? uuid : UNKNOWN_UUID;
-  }
-
-  public static UUID parseOrNull(byte[] byteArray) {
+  private static UUID parseOrNull(byte[] byteArray) {
     return byteArray != null && byteArray.length == 16 ? parseOrThrow(byteArray) : null;
   }
 

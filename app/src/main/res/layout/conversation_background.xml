@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Layout.Content"
+    tools:ignore="MissingConstraints,HardcodedText">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutAppBar"
+        style="@style/AppBar.Layout">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageViewAvatar"
+            style="@style/AppBar.Avatar" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewAppBar"
+            style="@style/AppBar.Title"
+            android:text="@string/conversation_wallpaper" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/viewBack"
+            style="@style/AppBar.Button"
+            android:src="@drawable/ic_arrow_left_conversation_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewGallery"
+        style="@style/Signal.Text.Body"
+        android:clickable="false"
+        android:paddingEnd="24dp"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:includeFontPadding="false"
+        android:text="@string/background_template_gallery"
+        android:textColor="#515151"
+        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView2"
+        app:layout_constraintEnd_toEndOf="@+id/appCompatImageView2"
+        app:layout_constraintTop_toTopOf="@+id/appCompatImageView2" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView2"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:clickable="false"
+        android:src="@drawable/ic_image_dark"
+        android:tint="#515151"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layoutAppBar" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewTemplateTitle"
+        style="@style/Signal.Text.Body"
+        android:layout_marginStart="16dp"
+        android:text="@string/background_template_title"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textViewGallery"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        style="@style/RecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewGallery"
+        app:layout_constraintVertical_bias="1.0"
+        app:spanCount="3"
+        tools:itemCount="15"
+        tools:listitem="@layout/conversation_background_item" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

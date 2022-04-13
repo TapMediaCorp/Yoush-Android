@@ -14,7 +14,6 @@ public class StaleDevicesException extends NonSuccessfulResponseCodeException {
   private final StaleDevices staleDevices;
 
   public StaleDevicesException(StaleDevices staleDevices) {
-    super(410);
     this.staleDevices = staleDevices;
   }
 

@@ -23,8 +23,7 @@
                 android:fillViewport="true"
                 android:clickable="false"
                 app:layout_constraintTop_toBottomOf="@id/toolbar"
-                app:layout_constraintBottom_toBottomOf="parent"
-                tools:visibility="gone">
+                app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout android:layout_gravity="center"
                       android:layout_height="wrap_content"
@@ -34,62 +33,51 @@
                       android:paddingStart="28dp"
                       android:paddingEnd="28dp">
 
+            <TextView android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:textAppearance="@style/TextAppearance.Signal.Title2"
+                      android:text="@string/InviteActivity_friends_dont_let_friends_text_unencrypted"
+                      android:textColor="?title_text_color_primary"
+                      android:gravity="center_horizontal"
+                      android:layout_marginBottom="30dp"
+                      android:layout_marginTop="18dp"
+                      android:paddingStart="10dp"/>
+
             <EditText android:id="@+id/invite_text"
                       android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:minLines="2"
                       tools:text="Let's switch to Signal: https://sgnl.link/asdfdfsa"
                       android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                      android:background="@drawable/invite_edit_text_background"
+                      android:background="?attr/invite_edit_text_background"
                       android:paddingTop="10dp"
                       android:paddingBottom="10dp"
-                      android:textColor="@color/signal_text_primary"
+                      android:textColor="?title_text_color_primary"
                       android:paddingStart="10dp"
                       android:paddingEnd="20dp"
                       android:minHeight="@dimen/invite_edit_text_min_height"
                       android:gravity="top"
                       android:inputType="textShortMessage|textMultiLine"/>
 
-            <LinearLayout android:id="@+id/sms_button"
-                          android:layout_width="match_parent"
-                          android:layout_height="48dp"
-                          android:layout_marginTop="16dp"
-                          android:background="?attr/selectableItemBackground">
+            <Button android:id="@+id/sms_button"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/InviteActivity_share_with_contacts"
+                android:layout_marginTop="16dp"
+                android:textColor="?conversation_title_color"
+                android:background="@drawable/cta_button_background"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-                <ImageView android:layout_width="24dp"
-                           android:layout_height="24dp"
-                           android:layout_gravity="center_vertical"
-                           app:srcCompat="@drawable/ic_invite_inverse_28" />
-
-                <TextView style="@style/Signal.Text.Body"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:layout_gravity="center_vertical"
-                          android:layout_marginStart="26dp"
-                          android:text="@string/InviteActivity_share_with_contacts" />
-
-            </LinearLayout>
-
-            <LinearLayout android:id="@+id/share_button"
-                          android:layout_width="match_parent"
-                          android:layout_height="48dp"
-                          android:layout_marginTop="16dp"
-                          android:background="?attr/selectableItemBackground">
-
-                <ImageView android:layout_width="24dp"
-                           android:layout_height="24dp"
-                           android:layout_gravity="center_vertical"
-                           app:srcCompat="@drawable/ic_share_24_tinted" />
-
-                <TextView android:id="@+id/share_text"
-                          style="@style/Signal.Text.Body"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:layout_gravity="center_vertical"
-                          android:layout_marginStart="26dp"
-                          android:text="@string/InviteActivity_share_via" />
-
-            </LinearLayout>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/share_button"
+                style="@style/Button.Borderless"
+                app:drawableStartCompat="?invite_share_icon"
+                android:drawablePadding="4dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/InviteActivity_choose_how_to_share"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
     </ScrollView>
@@ -101,46 +89,42 @@
                   android:orientation="vertical"
                   android:visibility="gone"
                   app:layout_constraintBottom_toBottomOf="parent"
-                  app:layout_constraintTop_toBottomOf="@id/toolbar"
-                  tools:visibility="visible">
+                  app:layout_constraintTop_toBottomOf="@id/toolbar">
 
-        <org.thoughtcrime.securesms.components.ContactFilterView
-            android:id="@+id/contact_filter_edit_text"
+        <com.tapmedia.yoush.components.ContactFilterToolbar
+            android:id="@+id/contact_filter"
+            android:layout_height="?attr/actionBarSize"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dsl_settings_gutter"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="12dp"
-            android:layout_marginRight="@dimen/dsl_settings_gutter"
-            android:minHeight="44dp" />
+            android:minHeight="?attr/actionBarSize"
+            android:background="@color/core_ultramarine"
+            android:elevation="4dp"
+            app:searchTextStyle="@style/TextSecure.TitleTextStyle.Light" />
 
         <fragment android:id="@+id/contact_selection_list_fragment"
                   android:layout_width="match_parent"
                   android:layout_height="0dp"
                   android:layout_weight="1"
-                  android:name="org.thoughtcrime.securesms.ContactSelectionListFragment"
+                  android:name="com.tapmedia.yoush.ContactSelectionListFragment"
                   tools:layout="@layout/contact_selection_list_fragment"/>
 
         <LinearLayout android:layout_width="match_parent"
                       android:layout_height="wrap_content"
-                      android:gravity="center_horizontal"
+                      android:gravity="end"
                       android:padding="10dp"
                       android:orientation="horizontal">
 
             <Button android:id="@+id/cancel_sms_button"
-                    style="@style/Signal.Widget.Button.Large.Primary.Inverse"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    style="@style/Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="@string/InviteActivity_cancel" />
 
             <Button android:id="@+id/send_sms_button"
-                    style="@style/Signal.Widget.Button.Large.Primary.Inverse"
+                    style="@style/Button.Borderless"
                     android:enabled="false"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    tools:text="Send SMS (0)"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Send to 0 friends"/>
 
         </LinearLayout>
     </LinearLayout>

@@ -216,6 +216,7 @@
     <color name="blue_A200">#448AFF</color>
     <color name="blue_A400">#2979FF</color>
     <color name="blue_A700">#2962FF</color>
+    <color name="blue_B19">#DFA952</color>
 
     <color name="teal_50">#E0F2F1</color>
     <color name="teal_100">#B2DFDB</color>
@@ -272,6 +273,8 @@
     <color name="grey_700">#616161</color>
     <color name="grey_800">#424242</color>
     <color name="grey_900">#212121</color>
+    <color name="grey_1000">#EDEAEA</color>
+     <color name="grey_1001">#707070</color>
 
     <color name="grey_400_transparent">#44BDBDBD</color>
 

@@ -4,24 +4,18 @@ package org.whispersystems.signalservice.api.messages.calls;
 public class AnswerMessage {
 
   private final long   id;
-  private final String sdp;
-  private final byte[] opaque;
+  private final String description;
 
-  public AnswerMessage(long id, String sdp, byte[] opaque) {
-    this.id     = id;
-    this.sdp    = sdp;
-    this.opaque = opaque;
+  public AnswerMessage(long id, String description) {
+    this.id          = id;
+    this.description = description;
   }
 
-  public String getSdp() {
-    return sdp;
+  public String getDescription() {
+    return description;
   }
 
   public long getId() {
     return id;
-  }
-
-  public byte[] getOpaque() {
-    return opaque;
   }
 }

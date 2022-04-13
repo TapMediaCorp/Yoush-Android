@@ -5,6 +5,6 @@ package org.whispersystems.signalservice.api.push.exceptions;
  */
 public class ConflictException extends NonSuccessfulResponseCodeException {
   public ConflictException() {
-    super(409, "Conflict");
+    super("Conflict");
   }
 }

@@ -7,39 +7,32 @@ import org.whispersystems.libsignal.util.Pair;
 import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.api.push.TrustStore;
 import org.whispersystems.signalservice.api.util.CredentialsProvider;
+import org.whispersystems.signalservice.api.util.SleepTimer;
 import org.whispersystems.signalservice.api.util.Tls12SocketFactory;
-import org.whispersystems.signalservice.api.util.TlsProxySocketFactory;
-import org.whispersystems.signalservice.api.websocket.HealthMonitor;
-import org.whispersystems.signalservice.api.websocket.WebSocketConnectionState;
-import org.whispersystems.signalservice.internal.configuration.SignalProxy;
-import org.whispersystems.signalservice.internal.configuration.SignalServiceConfiguration;
+import org.whispersystems.signalservice.api.websocket.ConnectivityListener;
 import org.whispersystems.signalservice.internal.util.BlacklistingTrustManager;
 import org.whispersystems.signalservice.internal.util.Util;
+import org.whispersystems.signalservice.internal.util.concurrent.ListenableFuture;
+import org.whispersystems.signalservice.internal.util.concurrent.SettableFuture;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.schedulers.Schedulers;
-import io.reactivex.rxjava3.subjects.BehaviorSubject;
-import io.reactivex.rxjava3.subjects.SingleSubject;
 import okhttp3.ConnectionSpec;
 import okhttp3.Dns;
 import okhttp3.Interceptor;
@@ -57,62 +50,58 @@ import static org.whispersystems.signalservice.internal.websocket.WebSocketProto
 public class WebSocketConnection extends WebSocketListener {
 
   private static final String TAG                       = WebSocketConnection.class.getSimpleName();
-  public  static final int    KEEPALIVE_TIMEOUT_SECONDS = 55;
+  private static final int    KEEPALIVE_TIMEOUT_SECONDS = 55;
 
-  private final LinkedList<WebSocketRequestMessage> incomingRequests = new LinkedList<>();
-  private final Map<Long, OutgoingRequest>          outgoingRequests = new HashMap<>();
-  private final Set<Long>                           keepAlives       = new HashSet<>();
+  private final LinkedList<WebSocketRequestMessage>              incomingRequests = new LinkedList<>();
+  private final Map<Long, OutgoingRequest> outgoingRequests = new HashMap<>();
 
-  private final String                                    name;
-  private final String                                    wsUri;
-  private final TrustStore                                trustStore;
-  private final Optional<CredentialsProvider>             credentialsProvider;
-  private final String                                    signalAgent;
-  private final HealthMonitor                             healthMonitor;
-  private final List<Interceptor>                         interceptors;
-  private final Optional<Dns>                             dns;
-  private final Optional<SignalProxy>                     signalProxy;
-  private final BehaviorSubject<WebSocketConnectionState> webSocketState;
+  private final String                        wsUri;
+  private final TrustStore                    trustStore;
+  private final Optional<CredentialsProvider> credentialsProvider;
+  private final String                        signalAgent;
+  private final ConnectivityListener          listener;
+  private final SleepTimer                    sleepTimer;
+  private final List<Interceptor>             interceptors;
+  private final Optional<Dns>                 dns;
 
-  private WebSocket client;
+  private WebSocket           client;
+  private KeepAliveSender     keepAliveSender;
+  private int                 attempts;
+  private boolean             connected;
 
-  public WebSocketConnection(String name,
-                             SignalServiceConfiguration serviceConfiguration,
+  public WebSocketConnection(String httpUri,
+                             TrustStore trustStore,
                              Optional<CredentialsProvider> credentialsProvider,
                              String signalAgent,
-                             HealthMonitor healthMonitor)
+                             ConnectivityListener listener,
+                             SleepTimer timer,
+                             List<Interceptor> interceptors,
+                             Optional<Dns> dns)
   {
-    this.name                = "[" + name + ":" + System.identityHashCode(this) + "]";
-    this.trustStore          = serviceConfiguration.getSignalServiceUrls()[0].getTrustStore();
+    this.trustStore          = trustStore;
     this.credentialsProvider = credentialsProvider;
     this.signalAgent         = signalAgent;
-    this.interceptors        = serviceConfiguration.getNetworkInterceptors();
-    this.dns                 = serviceConfiguration.getDns();
-    this.signalProxy         = serviceConfiguration.getSignalProxy();
-    this.healthMonitor       = healthMonitor;
-    this.webSocketState      = BehaviorSubject.createDefault(WebSocketConnectionState.DISCONNECTED);
+    this.listener            = listener;
+    this.sleepTimer          = timer;
+    this.interceptors        = interceptors;
+    this.dns                 = dns;
+    this.attempts            = 0;
+    this.connected           = false;
 
-    String uri = serviceConfiguration.getSignalServiceUrls()[0].getUrl().replace("https://", "wss://").replace("http://", "ws://");
+    String uri = httpUri.replace("https://", "wss://").replace("http://", "ws://");
 
-    if (credentialsProvider.isPresent()) {
-      this.wsUri = uri + "/v1/websocket/?login=%s&password=%s";
-    } else {
-      this.wsUri = uri + "/v1/websocket/";
-    }
+    if (credentialsProvider.isPresent()) this.wsUri = uri + "/v1/websocket/?login=%s&password=%s";
+    else                                 this.wsUri = uri + "/v1/websocket/";
   }
 
-  public String getName() {
-    return name;
-  }
-
-  public synchronized Observable<WebSocketConnectionState> connect() {
-    log("connect()");
+  public synchronized void connect() {
+    Log.i(TAG, "connect()");
 
     if (client == null) {
       String filledUri;
 
       if (credentialsProvider.isPresent()) {
-        String identifier = Objects.requireNonNull(credentialsProvider.get().getAci()).toString();
+        String identifier = credentialsProvider.get().getUuid() != null ? credentialsProvider.get().getUuid().toString() : credentialsProvider.get().getE164();
         filledUri = String.format(wsUri, identifier, credentialsProvider.get().getPassword());
       } else {
         filledUri = wsUri;
@@ -120,19 +109,15 @@ public class WebSocketConnection extends WebSocketListener {
 
       Pair<SSLSocketFactory, X509TrustManager> socketFactory = createTlsSocketFactory(trustStore);
 
-      OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder().sslSocketFactory(new Tls12SocketFactory(socketFactory.first()),
-                                                                                       socketFactory.second())
-                                                                     .connectionSpecs(Util.immutableList(ConnectionSpec.RESTRICTED_TLS))
-                                                                     .readTimeout(KEEPALIVE_TIMEOUT_SECONDS + 10, TimeUnit.SECONDS)
-                                                                     .dns(dns.or(Dns.SYSTEM))
-                                                                     .connectTimeout(KEEPALIVE_TIMEOUT_SECONDS + 10, TimeUnit.SECONDS);
+      OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
+                                                           .sslSocketFactory(new Tls12SocketFactory(socketFactory.first()), socketFactory.second())
+                                                           .connectionSpecs(Util.immutableList(ConnectionSpec.RESTRICTED_TLS))
+                                                           .readTimeout(KEEPALIVE_TIMEOUT_SECONDS + 10, TimeUnit.SECONDS)
+                                                           .dns(dns.or(Dns.SYSTEM))
+                                                           .connectTimeout(KEEPALIVE_TIMEOUT_SECONDS + 10, TimeUnit.SECONDS);
 
       for (Interceptor interceptor : interceptors) {
         clientBuilder.addInterceptor(interceptor);
-      }
-
-      if (signalProxy.isPresent()) {
-        clientBuilder.socketFactory(new TlsProxySocketFactory(signalProxy.get().getHost(), signalProxy.get().getPort(), dns));
       }
 
       OkHttpClient okHttpClient = clientBuilder.build();
@@ -143,27 +128,28 @@ public class WebSocketConnection extends WebSocketListener {
         requestBuilder.addHeader("X-Signal-Agent", signalAgent);
       }
 
-      webSocketState.onNext(WebSocketConnectionState.CONNECTING);
+      if (listener != null) {
+        listener.onConnecting();
+      }
 
-      this.client = okHttpClient.newWebSocket(requestBuilder.build(), this);
+      this.connected = false;
+      this.client    = okHttpClient.newWebSocket(requestBuilder.build(), this);
     }
-    return webSocketState;
-  }
-
-  public synchronized boolean isDead() {
-    return client == null;
   }
 
   public synchronized void disconnect() {
-    log("disconnect()");
+    Log.i(TAG, "disconnect()");
 
     if (client != null) {
       client.close(1000, "OK");
-      client = null;
-      webSocketState.onNext(WebSocketConnectionState.DISCONNECTING);
+      client    = null;
+      connected = false;
     }
 
-    notifyAll();
+    if (keepAliveSender != null) {
+      keepAliveSender.shutdown();
+      keepAliveSender = null;
+    }
   }
 
   public synchronized WebSocketRequestMessage readRequest(long timeoutMillis)
@@ -179,36 +165,27 @@ public class WebSocketConnection extends WebSocketListener {
       Util.wait(this, Math.max(1, timeoutMillis - elapsedTime(startTime)));
     }
 
-    if (incomingRequests.isEmpty() && client == null) {
-      throw new IOException("Connection closed!");
-    } else if (incomingRequests.isEmpty()) {
-      throw new TimeoutException("Timeout exceeded");
-    } else {
-      return incomingRequests.removeFirst();
-    }
+    if      (incomingRequests.isEmpty() && client == null) throw new IOException("Connection closed!");
+    else if (incomingRequests.isEmpty())                   throw new TimeoutException("Timeout exceeded");
+    else                                                   return incomingRequests.removeFirst();
   }
 
-  public synchronized Single<WebsocketResponse> sendRequest(WebSocketRequestMessage request) throws IOException {
-    if (client == null) {
-      throw new IOException("No connection!");
-    }
+  public synchronized ListenableFuture<WebsocketResponse> sendRequest(WebSocketRequestMessage request) throws IOException {
+    if (client == null || !connected) throw new IOException("No connection!");
 
     WebSocketMessage message = WebSocketMessage.newBuilder()
                                                .setType(WebSocketMessage.Type.REQUEST)
                                                .setRequest(request)
                                                .build();
 
-    SingleSubject<WebsocketResponse> single = SingleSubject.create();
-
-    outgoingRequests.put(request.getId(), new OutgoingRequest(single));
+    SettableFuture<WebsocketResponse> future = new SettableFuture<>();
+    outgoingRequests.put(request.getId(), new OutgoingRequest(future, System.currentTimeMillis()));
 
     if (!client.send(ByteString.of(message.toByteArray()))) {
       throw new IOException("Write failed!");
     }
 
-    return single.subscribeOn(Schedulers.io())
-                 .observeOn(Schedulers.io())
-                 .timeout(10, TimeUnit.SECONDS, Schedulers.io());
+    return future;
   }
 
   public synchronized void sendResponse(WebSocketResponseMessage response) throws IOException {
@@ -226,20 +203,17 @@ public class WebSocketConnection extends WebSocketListener {
     }
   }
 
-  public synchronized void sendKeepAlive() throws IOException {
-    if (client != null) {
-      log( "Sending keep alive...");
-      long id = System.currentTimeMillis();
+  private synchronized void sendKeepAlive() throws IOException {
+    if (keepAliveSender != null && client != null) {
       byte[] message = WebSocketMessage.newBuilder()
                                        .setType(WebSocketMessage.Type.REQUEST)
                                        .setRequest(WebSocketRequestMessage.newBuilder()
-                                                                          .setId(id)
+                                                                          .setId(System.currentTimeMillis())
                                                                           .setPath("/v1/keepalive")
                                                                           .setVerb("GET")
-                                                                          .build())
-                                       .build()
+                                                                          .build()).build()
                                        .toByteArray();
-      keepAlives.add(id);
+
       if (!client.send(ByteString.of(message))) {
         throw new IOException("Write failed!");
       }
@@ -248,9 +222,14 @@ public class WebSocketConnection extends WebSocketListener {
 
   @Override
   public synchronized void onOpen(WebSocket webSocket, Response response) {
-    if (client != null) {
-      log("onOpen() connected");
-      webSocketState.onNext(WebSocketConnectionState.CONNECTED);
+    if (client != null && keepAliveSender == null) {
+      Log.i(TAG, "onOpen() connected");
+      attempts        = 0;
+      connected       = true;
+      keepAliveSender = new KeepAliveSender();
+      keepAliveSender.start();
+
+      if (listener != null) listener.onConnected();
     }
   }
 
@@ -259,66 +238,70 @@ public class WebSocketConnection extends WebSocketListener {
     try {
       WebSocketMessage message = WebSocketMessage.parseFrom(payload.toByteArray());
 
-      if (message.getType().getNumber() == WebSocketMessage.Type.REQUEST_VALUE) {
+      if (message.getType().getNumber() == WebSocketMessage.Type.REQUEST_VALUE)  {
+        Log.d(TAG, "onMessage() -- incoming request");
         incomingRequests.add(message.getRequest());
       } else if (message.getType().getNumber() == WebSocketMessage.Type.RESPONSE_VALUE) {
-        OutgoingRequest listener = outgoingRequests.remove(message.getResponse().getId());
+        OutgoingRequest listener = outgoingRequests.get(message.getResponse().getId());
         if (listener != null) {
-          listener.onSuccess(new WebsocketResponse(message.getResponse().getStatus(),
-                                                   new String(message.getResponse().getBody().toByteArray()),
-                                                   message.getResponse().getHeadersList()));
-          if (message.getResponse().getStatus() >= 400) {
-            healthMonitor.onMessageError(message.getResponse().getStatus(), credentialsProvider.isPresent());
-          }
-        } else if (keepAlives.remove(message.getResponse().getId())) {
-          healthMonitor.onKeepAliveResponse(message.getResponse().getId(), credentialsProvider.isPresent());
+          listener.getResponseFuture().set(new WebsocketResponse(message.getResponse().getStatus(),
+                                                                 new String(message.getResponse().getBody().toByteArray())));
+          Log.d(TAG, "onMessage() -- response received in " + (System.currentTimeMillis() - listener.getStartTimestamp()) + " ms");
+        } else {
+          Log.d(TAG, "onMessage() -- response received, but no listener");
         }
       }
 
       notifyAll();
     } catch (InvalidProtocolBufferException e) {
-      warn(e);
+      Log.w(TAG, e);
     }
   }
 
   @Override
   public synchronized void onClosed(WebSocket webSocket, int code, String reason) {
-    log("onClose()");
-    webSocketState.onNext(WebSocketConnectionState.DISCONNECTED);
+    Log.i(TAG, "onClose()");
+    this.connected = false;
 
-    cleanupAfterShutdown();
+    Iterator<Map.Entry<Long, OutgoingRequest>> iterator = outgoingRequests.entrySet().iterator();
+
+    while (iterator.hasNext()) {
+      Map.Entry<Long, OutgoingRequest> entry = iterator.next();
+      entry.getValue().getResponseFuture().setException(new IOException("Closed: " + code + ", " + reason));
+      iterator.remove();
+    }
+
+    if (keepAliveSender != null) {
+      keepAliveSender.shutdown();
+      keepAliveSender = null;
+    }
+
+    if (listener != null) {
+      listener.onDisconnected();
+    }
+
+    Util.wait(this, Math.min(++attempts * 200, TimeUnit.SECONDS.toMillis(15)));
+
+    if (client != null) {
+      client.close(1000, "OK");
+      client    = null;
+      connected = false;
+      connect();
+    }
 
     notifyAll();
   }
 
   @Override
   public synchronized void onFailure(WebSocket webSocket, Throwable t, Response response) {
-    warn("onFailure()", t);
+    Log.w(TAG, "onFailure()", t);
 
     if (response != null && (response.code() == 401 || response.code() == 403)) {
-      webSocketState.onNext(WebSocketConnectionState.AUTHENTICATION_FAILED);
-    } else {
-      webSocketState.onNext(WebSocketConnectionState.FAILED);
-    }
-
-    cleanupAfterShutdown();
-
-    notifyAll();
-  }
-
-  private void cleanupAfterShutdown() {
-    Iterator<Map.Entry<Long, OutgoingRequest>> iterator = outgoingRequests.entrySet().iterator();
-
-    while (iterator.hasNext()) {
-      Map.Entry<Long, OutgoingRequest> entry = iterator.next();
-      entry.getValue().onError(new IOException("Closed unexpectedly"));
-      iterator.remove();
+      if (listener != null) listener.onAuthenticationFailure();
     }
 
     if (client != null) {
-      log("Client not null when closed");
-      client.close(1000, "OK");
-      client = null;
+      onClosed(webSocket, 1000, "OK");
     }
   }
 
@@ -329,8 +312,7 @@ public class WebSocketConnection extends WebSocketListener {
 
   @Override
   public synchronized void onClosing(WebSocket webSocket, int code, String reason) {
-    log("onClosing()");
-    webSocketState.onNext(WebSocketConnectionState.DISCONNECTING);
+    Log.i(TAG, "onClosing()");
     webSocket.close(1000, "OK");
   }
 
@@ -344,43 +326,49 @@ public class WebSocketConnection extends WebSocketListener {
       TrustManager[] trustManagers = BlacklistingTrustManager.createFor(trustStore);
       context.init(null, trustManagers, null);
 
-      return new Pair<>(context.getSocketFactory(), (X509TrustManager) trustManagers[0]);
+      return new Pair<>(context.getSocketFactory(), (X509TrustManager)trustManagers[0]);
     } catch (NoSuchAlgorithmException | KeyManagementException e) {
       throw new AssertionError(e);
     }
   }
 
-  private void log(String message) {
-    Log.i(TAG, name + " " + message);
-  }
+  private class KeepAliveSender extends Thread {
 
-  @SuppressWarnings("SameParameterValue")
-  private void warn(String message) {
-    Log.w(TAG, name + " " + message);
-  }
+    private AtomicBoolean stop = new AtomicBoolean(false);
 
-  private void warn(Throwable e) {
-    Log.w(TAG, name, e);
-  }
+    public void run() {
+      while (!stop.get()) {
+        try {
+          sleepTimer.sleep(TimeUnit.SECONDS.toMillis(KEEPALIVE_TIMEOUT_SECONDS));
 
-  @SuppressWarnings("SameParameterValue")
-  private void warn(String message, Throwable e) {
-    Log.w(TAG, name + " " + message, e);
+          Log.d(TAG, "Sending keep alive...");
+          sendKeepAlive();
+        } catch (Throwable e) {
+          Log.w(TAG, e);
+        }
+      }
+    }
+
+    public void shutdown() {
+      stop.set(true);
+    }
   }
 
   private static class OutgoingRequest {
-    private final SingleSubject<WebsocketResponse> responseSingle;
+    private final SettableFuture<WebsocketResponse> responseFuture;
+    private final long                              startTimestamp;
 
-    private OutgoingRequest(SingleSubject<WebsocketResponse> future) {
-      this.responseSingle = future;
+    private OutgoingRequest(SettableFuture<WebsocketResponse> future, long startTimestamp) {
+      this.responseFuture = future;
+      this.startTimestamp = startTimestamp;
     }
 
-    public void onSuccess(WebsocketResponse response) {
-      responseSingle.onSuccess(response);
+    SettableFuture<WebsocketResponse> getResponseFuture() {
+      return responseFuture;
     }
 
-    public void onError(Throwable throwable) {
-      responseSingle.onError(throwable);
+    long getStartTimestamp() {
+      return startTimestamp;
     }
   }
 }

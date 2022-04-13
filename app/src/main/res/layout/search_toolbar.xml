@@ -10,10 +10,10 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/signal_background_primary"/>
+            android:background="?attr/search_toolbar_background"/>
 
     <View android:layout_width="match_parent"
-          android:layout_height="5dp"
-          android:background="@drawable/toolbar_shadow"/>
+          android:layout_height="4dp"
+          android:background="@drawable/search_toolbar_shadow"/>
 
 </merge>

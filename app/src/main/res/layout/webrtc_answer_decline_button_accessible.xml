@@ -5,7 +5,7 @@
     android:id="@+id/merge"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    tools:background="#7f000000"
+    tools:background="@drawable/gradient_header_colors"
     tools:orientation="vertical"
     tools:parentTag="android.widget.LinearLayout">
 
@@ -17,25 +17,48 @@
         android:padding="16dp">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/answer"
+            android:id="@+id/reject"
             android:layout_width="56dp"
             android:layout_height="56dp"
+
             android:background="@drawable/circle_tintable"
-            android:contentDescription="@string/WebRtcCallControls_answer_call_description"
-            android:src="@drawable/ic_phone_grey600_32dp"
-            android:tint="@color/white"
-            app:backgroundTint="@color/green_600"
-            tools:layout_editor_absoluteX="12dp" />
+            android:contentDescription="@string/WebRtcCallControls_reject_call_description"
+            android:src="@drawable/ic_call_end_light"
+            app:backgroundTint="#FF6969" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/reject"
+            android:id="@+id/answer"
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_marginStart="64dp"
             android:background="@drawable/circle_tintable"
-            android:contentDescription="@string/WebRtcCallControls_reject_call_description"
-            android:src="@drawable/ic_call_end_white_48dp"
-            app:backgroundTint="@color/red_500" />
+            android:contentDescription="@string/WebRtcCallControls_answer_call_description"
+            android:src="@drawable/ic_phone_light"
+            android:tint="@color/white"
+            app:backgroundTint="#4CD964"
+            tools:layout_editor_absoluteX="12dp" />
+
+<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--            android:id="@+id/reject"-->
+<!--            android:layout_width="56dp"-->
+<!--            android:layout_height="56dp"-->
+<!--            android:background="@drawable/circle_tintable"-->
+<!--            android:contentDescription="@string/WebRtcCallControls_reject_call_description"-->
+<!--            android:src="@drawable/ic_call_end_light"-->
+<!--            app:backgroundTint="#4CD964"-->
+<!--            tools:layout_editor_absoluteX="12dp" />-->
+
+<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--            android:id="@+id/reject"-->
+<!--            android:layout_width="56dp"-->
+<!--            android:layout_height="56dp"-->
+<!--            android:layout_marginStart="64dp"-->
+<!--            android:background="@drawable/circle_tintable"-->
+<!--            android:contentDescription="@string/WebRtcCallControls_reject_call_description"-->
+<!--            android:src="@drawable/ic_call_end_light"-->
+<!--            app:backgroundTint="#FF6969" />-->
+
+
 
     </LinearLayout>
 

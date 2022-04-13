@@ -3,10 +3,7 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/media_preview__forward"
           android:title="@string/media_preview__forward_title"
-          android:icon="@drawable/ic_forward_24"
-          app:showAsAction="never"/>
-    <item android:id="@+id/media_preview__share"
-          android:title="@string/media_preview__share_title"
+          android:icon="?menu_forward_icon"
           app:showAsAction="never"/>
     <item android:id="@+id/save"
           android:title="@string/media_preview__save_title"
@@ -18,6 +15,6 @@
           app:showAsAction="never"/>
     <item android:id="@+id/delete"
           android:title="@string/delete"
-          android:icon="@drawable/ic_trash_24"
+          android:icon="?menu_trash_icon"
           app:showAsAction="never"/>
 </menu>

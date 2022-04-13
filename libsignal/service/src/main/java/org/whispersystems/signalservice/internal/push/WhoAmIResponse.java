@@ -6,21 +6,7 @@ public class WhoAmIResponse {
   @JsonProperty
   private String uuid;
 
-  @JsonProperty
-  private String pni;
-
-  @JsonProperty
-  private String number;
-
-  public String getAci() {
+  public String getUuid() {
     return uuid;
-  }
-
-  public String getPni() {
-    return pni;
-  }
-
-  public String getNumber() {
-    return number;
   }
 }

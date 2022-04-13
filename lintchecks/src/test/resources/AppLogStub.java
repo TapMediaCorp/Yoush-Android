@@ -1,4 +1,4 @@
-package org.signal.core.util.logging;
+package com.tapmedia.yoush.logging;
 
 public class Log {
 

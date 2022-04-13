@@ -6,6 +6,6 @@
     <changeImageTransform />
     <changeBounds />
 
-    <transition class="org.thoughtcrime.securesms.animation.transitions.CircleToSquareImageViewTransition" />
+    <transition class="com.tapmedia.yoush.animation.transitions.CircleToSquareImageViewTransition" />
 
 </transitionSet>

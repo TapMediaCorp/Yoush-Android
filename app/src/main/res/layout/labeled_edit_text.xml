@@ -11,8 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="9dp"
-        android:background="@drawable/labeled_edit_text_background_inactive" />
-
+        android:background="@drawable/labeled_edit_text_bordered_radius_inactive" />
     <LinearLayout
         android:id="@+id/text_container"
         android:layout_width="match_parent"
@@ -26,8 +25,8 @@
             android:layout_marginStart="12dp"
             android:paddingStart="4dp"
             android:paddingEnd="4dp"
-            android:background="@color/signal_background_primary"
-            android:textColor="@color/signal_text_primary_dialog"
+            android:background="@color/white"
+            android:textColor="@color/core_blue_dark"
             style="@style/Signal.Text.Caption"
             tools:text="Profile Name"/>
 

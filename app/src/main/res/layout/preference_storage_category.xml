@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="1.2GB" />
 
-    <org.thoughtcrime.securesms.preferences.widgets.StorageGraphView
+    <com.tapmedia.yoush.preferences.widgets.StorageGraphView
         android:id="@+id/storageGraphView"
         android:layout_width="0dp"
         android:layout_height="28dp"
@@ -81,12 +81,10 @@
 
     <TextView
         android:id="@+id/free_up_space"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?selectableItemBackground"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/preferences_storage__review_storage"
         android:textAllCaps="true"
         android:textColor="@color/core_ultramarine"

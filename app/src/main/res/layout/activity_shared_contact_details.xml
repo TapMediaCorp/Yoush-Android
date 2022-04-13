@@ -14,7 +14,7 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/signal_background_tertiary">
+            android:background="?attr/shared_contact_details_header_background">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -32,7 +32,7 @@
                     app:layout_collapseMode="parallax"
                     app:layout_collapseParallaxMultiplier="0.7"/>
 
-                <org.thoughtcrime.securesms.components.emoji.EmojiTextView
+                <com.tapmedia.yoush.components.emoji.EmojiTextView
                     android:id="@+id/contact_details_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -93,7 +93,7 @@
                             android:gravity="center"
                             android:padding="10dp">
 
-                            <androidx.appcompat.widget.AppCompatImageView
+                            <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="6dp"
@@ -117,7 +117,7 @@
                             android:gravity="center"
                             android:padding="10dp">
 
-                            <androidx.appcompat.widget.AppCompatImageView
+                            <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="6dp"

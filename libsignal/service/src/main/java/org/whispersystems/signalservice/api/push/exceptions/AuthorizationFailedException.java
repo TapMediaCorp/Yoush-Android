@@ -7,7 +7,7 @@
 package org.whispersystems.signalservice.api.push.exceptions;
 
 public class AuthorizationFailedException extends NonSuccessfulResponseCodeException {
-  public AuthorizationFailedException(int code, String s) {
-    super(code, s);
+  public AuthorizationFailedException(String s) {
+    super(s);
   }
 }

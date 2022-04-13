@@ -6,24 +6,27 @@
 
 package org.whispersystems.signalservice.internal.util;
 
-import org.whispersystems.signalservice.api.push.ACI;
 import org.whispersystems.signalservice.api.util.CredentialsProvider;
+
+import java.util.UUID;
 
 public class StaticCredentialsProvider implements CredentialsProvider {
 
-  private final ACI    aci;
+  private final UUID   uuid;
   private final String e164;
   private final String password;
+  private final String signalingKey;
 
-  public StaticCredentialsProvider(ACI aci, String e164, String password) {
-    this.aci      = aci;
-    this.e164     = e164;
-    this.password = password;
+  public StaticCredentialsProvider(UUID uuid, String e164, String password, String signalingKey) {
+    this.uuid         = uuid;
+    this.e164         = e164;
+    this.password     = password;
+    this.signalingKey = signalingKey;
   }
 
   @Override
-  public ACI getAci() {
-    return aci;
+  public UUID getUuid() {
+    return uuid;
   }
 
   @Override
@@ -34,5 +37,10 @@ public class StaticCredentialsProvider implements CredentialsProvider {
   @Override
   public String getPassword() {
     return password;
+  }
+
+  @Override
+  public String getSignalingKey() {
+    return signalingKey;
   }
 }

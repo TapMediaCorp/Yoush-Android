@@ -173,9 +173,4 @@ public class NowhereBufferedSink implements BufferedSink {
   public boolean isOpen() {
     return false;
   }
-
-  @Override
-  public Buffer getBuffer() {
-    return null;
-  }
 }

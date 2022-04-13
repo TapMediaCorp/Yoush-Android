@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.tapmedia.yoush.ui.widget.AppMotionLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutMotion"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    app:layoutDescription="@xml/motion_conversation_list_item_hidden"
+    tools:ignore="HardcodedText">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/viewUnHide"
+        style="@style/ConversationListItem.ButtonLayout"
+        android:background="#175D8B"
+        app:layout_constraintEnd_toStartOf="@+id/viewDelete"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageViewUnHide"
+            style="@style/ConversationListItem.ButtonImage"
+            android:src="@drawable/ic_visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewUnHide"
+            style="@style/ConversationListItem.ButtonText"
+            android:text="@string/un_hide" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <include layout="@layout/conversation_list_item_content"/>
+
+</com.tapmedia.yoush.ui.widget.AppMotionLayout>

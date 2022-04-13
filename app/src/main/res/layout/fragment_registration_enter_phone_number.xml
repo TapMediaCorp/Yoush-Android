@@ -12,20 +12,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"/>
-
         <FrameLayout
             android:id="@+id/country_spinner_frame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
+            android:layout_marginStart="53dp"
             android:layout_marginTop="24dp"
-            android:layout_marginEnd="32dp"
-            android:background="@drawable/labeled_edit_text_background_inactive"
+            android:layout_marginEnd="53dp"
+            android:background="@drawable/labeled_text_bordered_radius"
 
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -45,29 +39,30 @@
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
+            android:layout_marginStart="53dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="32dp"
+            android:layout_marginEnd="53dp"
             android:layoutDirection="ltr"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/country_spinner_frame">
 
-            <org.thoughtcrime.securesms.components.LabeledEditText
+            <com.tapmedia.yoush.components.LabeledEditText
                 android:id="@+id/country_code"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="1dp"
                 android:layout_weight="1"
                 app:labeledEditText_background="@color/white"
-                app:labeledEditText_textLayout="@layout/country_code_text" />
+                app:labeledEditText_textLayout="@layout/country_code_text"/>
 
-            <org.thoughtcrime.securesms.components.LabeledEditText
+            <com.tapmedia.yoush.components.LabeledEditText
                 android:id="@+id/number"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_weight="2"
                 app:labeledEditText_background="@color/white"
                 app:labeledEditText_label="@string/RegistrationActivity_phone_number_description"
                 app:labeledEditText_textLayout="@layout/phone_text" />
@@ -80,24 +75,26 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="32dp"
+            android:layout_marginTop="40dp"
             android:layout_marginEnd="32dp"
+            android:fontFamily="@font/roboto_black"
             android:gravity="center"
-            android:text="@string/RegistrationActivity_enter_your_phone_number_to_get_started"
+            android:text="@string/enter_your_phone_number_to_get_started"
+            android:textColor="#707070"
+            android:textSize="25sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/verify_subheader"
             style="@style/Signal.Text.Body.Registration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="32dp"
             android:gravity="center"
-            android:text="@string/RegistrationActivity_you_will_receive_a_verification_code"
+            android:textColor="#707070"
             app:layout_constraintTop_toBottomOf="@+id/verify_header"
             tools:layout_editor_absoluteX="0dp" />
 
@@ -109,30 +106,36 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:text="@android:string/cancel"
-            android:textColor="@color/core_grey_60"
+            android:textColor="#DFA952"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/registerButton"
-            app:layout_constraintVertical_bias="0" />
+            app:layout_constraintVertical_bias="0"
+            android:textAllCaps="false"/>
 
         <com.dd.CircularProgressButton
             android:id="@+id/registerButton"
             style="@style/Button.Registration"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="32dp"
+            android:layout_marginStart="53dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="53dp"
             android:layout_marginBottom="16dp"
-            app:cpb_textIdle="@string/RegistrationActivity_next"
+            android:textColor="#fff"
+            app:cpb_colorProgress="#DFA952"
+            app:cpb_cornerRadius="40dp"
+            app:cpb_textIdle="@string/enter_code_next_btn"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-            app:layout_constraintVertical_bias="0" />
+            app:layout_constraintVertical_bias="0"
+            android:textAllCaps="false"
+            app:cpb_selectorIdle="@drawable/progress_button_blue_light"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

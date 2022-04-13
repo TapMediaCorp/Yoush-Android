@@ -7,9 +7,6 @@ public class VerifyAccountResponse {
   private String uuid;
 
   @JsonProperty
-  private String pni;
-
-  @JsonProperty
   private boolean storageCapable;
 
   public String getUuid() {
@@ -18,9 +15,5 @@ public class VerifyAccountResponse {
 
   public boolean isStorageCapable() {
     return storageCapable;
-  }
-
-  public String getPni() {
-    return pni;
   }
 }

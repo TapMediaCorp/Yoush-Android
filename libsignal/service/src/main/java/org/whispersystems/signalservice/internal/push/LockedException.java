@@ -9,8 +9,7 @@ public final class LockedException extends NonSuccessfulResponseCodeException {
   private final long   timeRemaining;
   private final String basicStorageCredentials;
 
-  public LockedException(int length, long timeRemaining, String basicStorageCredentials) {
-    super(423);
+  LockedException(int length, long timeRemaining, String basicStorageCredentials) {
     this.length                  = length;
     this.timeRemaining           = timeRemaining;
     this.basicStorageCredentials = basicStorageCredentials;

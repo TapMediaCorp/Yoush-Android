@@ -17,20 +17,20 @@
                   android:layout_height="wrap_content"
                   android:layout_marginStart="10dp">
 
-        <org.thoughtcrime.securesms.components.emoji.EmojiTextView
+        <com.tapmedia.yoush.components.emoji.EmojiTextView
                 android:id="@+id/profile_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textAlignment="viewStart"
-                android:textStyle="bold"
-                android:textColor="@color/signal_text_primary"
+                android:textStyle="normal"
+                android:textColor="#DFA952"
                 tools:text="Voltarine DeClyre"/>
 
         <TextView android:id="@+id/number"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:textColor="@color/signal_text_secondary"
+                  android:textColor="?attr/debuglog_color_none"
                   android:textSize="14sp"
                   tools:text="+14151231234"/>
 

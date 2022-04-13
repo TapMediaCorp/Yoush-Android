@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/conversationPinLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="32dp"
+    tools:background="@color/white"
+    tools:ignore="HardcodedText">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/alertTextViewTitle"
+        style="@style/Signal.Text.Caption.MessageSent"
+        android:layout_marginBottom="4dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@id/alertTextViewSubTitle"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        tools:text="Title goes here"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/alertTextViewSubTitle"
+        style="@style/Signal.Text.Caption.MessageSent"
+        android:layout_width="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:gravity="center"
+        android:maxLines="5"
+        app:layout_constraintBottom_toTopOf="@id/alertViewConfirm"
+        android:textSize="14sp"
+        tools:text="Subtitle goes here"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/alertViewConfirm"
+        style="@style/Signal.Text.Caption.MessageSent"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:gravity="center"
+        android:background="@drawable/top_line_bg"
+        app:layout_constraintBottom_toTopOf="@+id/alertViewCancel"
+        android:textColor="@color/red_800"
+        android:textSize="16sp"
+        tools:text="Confirm"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/alertViewCancel"
+        style="@style/Signal.Text.Caption.MessageSent"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="64dp"
+        android:background="@drawable/top_line_bg"
+        android:gravity="center"
+        tools:text="Cancel"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

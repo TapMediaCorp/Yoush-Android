@@ -8,7 +8,7 @@
     android:clickable="true"
     android:focusable="true">
 
-    <org.thoughtcrime.securesms.components.AvatarImageView
+    <com.tapmedia.yoush.components.AvatarImageView
         android:id="@+id/recipient_avatar"
         android:layout_width="48dp"
         android:layout_height="48dp"
@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <org.thoughtcrime.securesms.components.emoji.EmojiTextView
+    <TextView
         android:id="@+id/recipient_name"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -26,7 +26,6 @@
         app:layout_goneMarginEnd="16dp"
         android:textAlignment="viewStart"
         android:textAppearance="@style/TextAppearance.Signal.Body1"
-        android:maxLines="2"
         app:layout_constraintBottom_toTopOf="@+id/sms_contact"
         app:layout_constraintEnd_toStartOf="@+id/sms_warning"
         app:layout_constraintHorizontal_bias="0"
@@ -43,7 +42,7 @@
         android:text="@string/AddGroupDetailsFragment__sms_contact"
         android:textAlignment="viewStart"
         android:textAppearance="@style/TextAppearance.Signal.Body2"
-        android:textColor="@color/signal_text_secondary"
+        android:textColor="?attr/title_text_color_secondary"
         app:layout_constraintBottom_toBottomOf="@id/recipient_avatar"
         app:layout_constraintEnd_toEndOf="@+id/recipient_name"
         app:layout_constraintHorizontal_bias="0"

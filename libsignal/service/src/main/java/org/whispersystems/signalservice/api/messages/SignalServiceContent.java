@@ -16,23 +16,17 @@ import org.signal.zkgroup.groups.GroupMasterKey;
 import org.whispersystems.libsignal.IdentityKey;
 import org.whispersystems.libsignal.InvalidKeyException;
 import org.whispersystems.libsignal.InvalidMessageException;
-import org.whispersystems.libsignal.LegacyMessageException;
 import org.whispersystems.libsignal.logging.Log;
-import org.whispersystems.libsignal.protocol.DecryptionErrorMessage;
-import org.whispersystems.libsignal.protocol.SenderKeyDistributionMessage;
 import org.whispersystems.libsignal.util.guava.Optional;
-import org.whispersystems.signalservice.api.InvalidMessageStructureException;
 import org.whispersystems.signalservice.api.messages.calls.AnswerMessage;
 import org.whispersystems.signalservice.api.messages.calls.BusyMessage;
 import org.whispersystems.signalservice.api.messages.calls.HangupMessage;
 import org.whispersystems.signalservice.api.messages.calls.IceUpdateMessage;
 import org.whispersystems.signalservice.api.messages.calls.OfferMessage;
-import org.whispersystems.signalservice.api.messages.calls.OpaqueMessage;
 import org.whispersystems.signalservice.api.messages.calls.SignalServiceCallMessage;
 import org.whispersystems.signalservice.api.messages.multidevice.BlockedListMessage;
 import org.whispersystems.signalservice.api.messages.multidevice.ConfigurationMessage;
 import org.whispersystems.signalservice.api.messages.multidevice.MessageRequestResponseMessage;
-import org.whispersystems.signalservice.api.messages.multidevice.OutgoingPaymentMessage;
 import org.whispersystems.signalservice.api.messages.multidevice.ReadMessage;
 import org.whispersystems.signalservice.api.messages.multidevice.RequestMessage;
 import org.whispersystems.signalservice.api.messages.multidevice.SentTranscriptMessage;
@@ -40,10 +34,7 @@ import org.whispersystems.signalservice.api.messages.multidevice.SignalServiceSy
 import org.whispersystems.signalservice.api.messages.multidevice.StickerPackOperationMessage;
 import org.whispersystems.signalservice.api.messages.multidevice.VerifiedMessage;
 import org.whispersystems.signalservice.api.messages.multidevice.ViewOnceOpenMessage;
-import org.whispersystems.signalservice.api.messages.multidevice.ViewedMessage;
 import org.whispersystems.signalservice.api.messages.shared.SharedContact;
-import org.whispersystems.signalservice.api.payments.Money;
-import org.whispersystems.signalservice.api.push.ACI;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 import org.whispersystems.signalservice.api.util.UuidUtil;
 import org.whispersystems.signalservice.internal.push.SignalServiceProtos;
@@ -52,14 +43,12 @@ import org.whispersystems.signalservice.internal.push.UnsupportedDataMessageProt
 import org.whispersystems.signalservice.internal.serialize.SignalServiceAddressProtobufSerializer;
 import org.whispersystems.signalservice.internal.serialize.SignalServiceMetadataProtobufSerializer;
 import org.whispersystems.signalservice.internal.serialize.protos.SignalServiceContentProto;
-import org.whispersystems.util.FlagUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static org.whispersystems.signalservice.internal.push.SignalServiceProtos.GroupContext.Type.DELIVER;
 
@@ -74,27 +63,20 @@ public final class SignalServiceContent {
   private final long                      serverDeliveredTimestamp;
   private final boolean                   needsReceipt;
   private final SignalServiceContentProto serializedState;
-  private final String                    serverUuid;
-  private final Optional<byte[]>          groupId;
 
-  private final Optional<SignalServiceDataMessage>     message;
-  private final Optional<SignalServiceSyncMessage>     synchronizeMessage;
-  private final Optional<SignalServiceCallMessage>     callMessage;
-  private final Optional<SignalServiceReceiptMessage>  readMessage;
-  private final Optional<SignalServiceTypingMessage>   typingMessage;
-  private final Optional<SenderKeyDistributionMessage> senderKeyDistributionMessage;
-  private final Optional<DecryptionErrorMessage>       decryptionErrorMessage;
+  private final Optional<SignalServiceDataMessage>    message;
+  private final Optional<SignalServiceSyncMessage>    synchronizeMessage;
+  private final Optional<SignalServiceCallMessage>    callMessage;
+  private final Optional<SignalServiceReceiptMessage> readMessage;
+  private final Optional<SignalServiceTypingMessage>  typingMessage;
 
   private SignalServiceContent(SignalServiceDataMessage message,
-                               Optional<SenderKeyDistributionMessage> senderKeyDistributionMessage,
                                SignalServiceAddress sender,
                                int senderDevice,
                                long timestamp,
                                long serverReceivedTimestamp,
                                long serverDeliveredTimestamp,
                                boolean needsReceipt,
-                               String serverUuid,
-                               Optional<byte[]> groupId,
                                SignalServiceContentProto serializedState)
   {
     this.sender                   = sender;
@@ -103,29 +85,22 @@ public final class SignalServiceContent {
     this.serverReceivedTimestamp  = serverReceivedTimestamp;
     this.serverDeliveredTimestamp = serverDeliveredTimestamp;
     this.needsReceipt             = needsReceipt;
-    this.serverUuid               = serverUuid;
-    this.groupId                  = groupId;
     this.serializedState          = serializedState;
 
-    this.message                      = Optional.fromNullable(message);
-    this.synchronizeMessage           = Optional.absent();
-    this.callMessage                  = Optional.absent();
-    this.readMessage                  = Optional.absent();
-    this.typingMessage                = Optional.absent();
-    this.senderKeyDistributionMessage = senderKeyDistributionMessage;
-    this.decryptionErrorMessage       = Optional.absent();
+    this.message            = Optional.fromNullable(message);
+    this.synchronizeMessage = Optional.absent();
+    this.callMessage        = Optional.absent();
+    this.readMessage        = Optional.absent();
+    this.typingMessage      = Optional.absent();
   }
 
   private SignalServiceContent(SignalServiceSyncMessage synchronizeMessage,
-                               Optional<SenderKeyDistributionMessage> senderKeyDistributionMessage,
                                SignalServiceAddress sender,
                                int senderDevice,
                                long timestamp,
                                long serverReceivedTimestamp,
                                long serverDeliveredTimestamp,
                                boolean needsReceipt,
-                               String serverUuid,
-                               Optional<byte[]> groupId,
                                SignalServiceContentProto serializedState)
   {
     this.sender                   = sender;
@@ -134,29 +109,22 @@ public final class SignalServiceContent {
     this.serverReceivedTimestamp  = serverReceivedTimestamp;
     this.serverDeliveredTimestamp = serverDeliveredTimestamp;
     this.needsReceipt             = needsReceipt;
-    this.serverUuid               = serverUuid;
-    this.groupId                  = groupId;
     this.serializedState          = serializedState;
 
-    this.message                      = Optional.absent();
-    this.synchronizeMessage           = Optional.fromNullable(synchronizeMessage);
-    this.callMessage                  = Optional.absent();
-    this.readMessage                  = Optional.absent();
-    this.typingMessage                = Optional.absent();
-    this.senderKeyDistributionMessage = senderKeyDistributionMessage;
-    this.decryptionErrorMessage       = Optional.absent();
+    this.message            = Optional.absent();
+    this.synchronizeMessage = Optional.fromNullable(synchronizeMessage);
+    this.callMessage        = Optional.absent();
+    this.readMessage        = Optional.absent();
+    this.typingMessage      = Optional.absent();
   }
 
   private SignalServiceContent(SignalServiceCallMessage callMessage,
-                               Optional<SenderKeyDistributionMessage> senderKeyDistributionMessage,
                                SignalServiceAddress sender,
                                int senderDevice,
                                long timestamp,
                                long serverReceivedTimestamp,
                                long serverDeliveredTimestamp,
                                boolean needsReceipt,
-                               String serverUuid,
-                               Optional<byte[]> groupId,
                                SignalServiceContentProto serializedState)
   {
     this.sender                   = sender;
@@ -165,29 +133,22 @@ public final class SignalServiceContent {
     this.serverReceivedTimestamp  = serverReceivedTimestamp;
     this.serverDeliveredTimestamp = serverDeliveredTimestamp;
     this.needsReceipt             = needsReceipt;
-    this.serverUuid               = serverUuid;
-    this.groupId                  = groupId;
     this.serializedState          = serializedState;
 
-    this.message                      = Optional.absent();
-    this.synchronizeMessage           = Optional.absent();
-    this.callMessage                  = Optional.of(callMessage);
-    this.readMessage                  = Optional.absent();
-    this.typingMessage                = Optional.absent();
-    this.senderKeyDistributionMessage = senderKeyDistributionMessage;
-    this.decryptionErrorMessage       = Optional.absent();
+    this.message            = Optional.absent();
+    this.synchronizeMessage = Optional.absent();
+    this.callMessage        = Optional.of(callMessage);
+    this.readMessage        = Optional.absent();
+    this.typingMessage      = Optional.absent();
   }
 
   private SignalServiceContent(SignalServiceReceiptMessage receiptMessage,
-                               Optional<SenderKeyDistributionMessage> senderKeyDistributionMessage,
                                SignalServiceAddress sender,
                                int senderDevice,
                                long timestamp,
                                long serverReceivedTimestamp,
                                long serverDeliveredTimestamp,
                                boolean needsReceipt,
-                               String serverUuid,
-                               Optional<byte[]> groupId,
                                SignalServiceContentProto serializedState)
   {
     this.sender                   = sender;
@@ -196,60 +157,22 @@ public final class SignalServiceContent {
     this.serverReceivedTimestamp  = serverReceivedTimestamp;
     this.serverDeliveredTimestamp = serverDeliveredTimestamp;
     this.needsReceipt             = needsReceipt;
-    this.serverUuid               = serverUuid;
-    this.groupId                  = groupId;
     this.serializedState          = serializedState;
 
-    this.message                      = Optional.absent();
-    this.synchronizeMessage           = Optional.absent();
-    this.callMessage                  = Optional.absent();
-    this.readMessage                  = Optional.of(receiptMessage);
-    this.typingMessage                = Optional.absent();
-    this.senderKeyDistributionMessage = senderKeyDistributionMessage;
-    this.decryptionErrorMessage       = Optional.absent();
-  }
-
-  private SignalServiceContent(DecryptionErrorMessage errorMessage,
-                               Optional<SenderKeyDistributionMessage> senderKeyDistributionMessage,
-                               SignalServiceAddress sender,
-                               int senderDevice,
-                               long timestamp,
-                               long serverReceivedTimestamp,
-                               long serverDeliveredTimestamp,
-                               boolean needsReceipt,
-                               String serverUuid,
-                               Optional<byte[]> groupId,
-                               SignalServiceContentProto serializedState)
-  {
-    this.sender                   = sender;
-    this.senderDevice             = senderDevice;
-    this.timestamp                = timestamp;
-    this.serverReceivedTimestamp  = serverReceivedTimestamp;
-    this.serverDeliveredTimestamp = serverDeliveredTimestamp;
-    this.needsReceipt             = needsReceipt;
-    this.serverUuid               = serverUuid;
-    this.groupId                  = groupId;
-    this.serializedState          = serializedState;
-
-    this.message                      = Optional.absent();
-    this.synchronizeMessage           = Optional.absent();
-    this.callMessage                  = Optional.absent();
-    this.readMessage                  = Optional.absent();
-    this.typingMessage                = Optional.absent();
-    this.senderKeyDistributionMessage = senderKeyDistributionMessage;
-    this.decryptionErrorMessage       = Optional.of(errorMessage);
+    this.message            = Optional.absent();
+    this.synchronizeMessage = Optional.absent();
+    this.callMessage        = Optional.absent();
+    this.readMessage        = Optional.of(receiptMessage);
+    this.typingMessage      = Optional.absent();
   }
 
   private SignalServiceContent(SignalServiceTypingMessage typingMessage,
-                               Optional<SenderKeyDistributionMessage> senderKeyDistributionMessage,
                                SignalServiceAddress sender,
                                int senderDevice,
                                long timestamp,
                                long serverReceivedTimestamp,
                                long serverDeliveredTimestamp,
                                boolean needsReceipt,
-                               String serverUuid,
-                               Optional<byte[]> groupId,
                                SignalServiceContentProto serializedState)
   {
     this.sender                   = sender;
@@ -258,47 +181,13 @@ public final class SignalServiceContent {
     this.serverReceivedTimestamp  = serverReceivedTimestamp;
     this.serverDeliveredTimestamp = serverDeliveredTimestamp;
     this.needsReceipt             = needsReceipt;
-    this.serverUuid               = serverUuid;
-    this.groupId                  = groupId;
     this.serializedState          = serializedState;
 
-    this.message                      = Optional.absent();
-    this.synchronizeMessage           = Optional.absent();
-    this.callMessage                  = Optional.absent();
-    this.readMessage                  = Optional.absent();
-    this.typingMessage                = Optional.of(typingMessage);
-    this.senderKeyDistributionMessage = senderKeyDistributionMessage;
-    this.decryptionErrorMessage       = Optional.absent();
-  }
-
-  private SignalServiceContent(SenderKeyDistributionMessage senderKeyDistributionMessage,
-                               SignalServiceAddress sender,
-                               int senderDevice,
-                               long timestamp,
-                               long serverReceivedTimestamp,
-                               long serverDeliveredTimestamp,
-                               boolean needsReceipt,
-                               String serverUuid,
-                               Optional<byte[]> groupId,
-                               SignalServiceContentProto serializedState)
-  {
-    this.sender                   = sender;
-    this.senderDevice             = senderDevice;
-    this.timestamp                = timestamp;
-    this.serverReceivedTimestamp  = serverReceivedTimestamp;
-    this.serverDeliveredTimestamp = serverDeliveredTimestamp;
-    this.needsReceipt             = needsReceipt;
-    this.serverUuid               = serverUuid;
-    this.groupId                  = groupId;
-    this.serializedState          = serializedState;
-
-    this.message                      = Optional.absent();
-    this.synchronizeMessage           = Optional.absent();
-    this.callMessage                  = Optional.absent();
-    this.readMessage                  = Optional.absent();
-    this.typingMessage                = Optional.absent();
-    this.senderKeyDistributionMessage = Optional.of(senderKeyDistributionMessage);
-    this.decryptionErrorMessage       = Optional.absent();
+    this.message            = Optional.absent();
+    this.synchronizeMessage = Optional.absent();
+    this.callMessage        = Optional.absent();
+    this.readMessage        = Optional.absent();
+    this.typingMessage      = Optional.of(typingMessage);
   }
 
   public Optional<SignalServiceDataMessage> getDataMessage() {
@@ -319,14 +208,6 @@ public final class SignalServiceContent {
 
   public Optional<SignalServiceTypingMessage> getTypingMessage() {
     return typingMessage;
-  }
-
-  public Optional<SenderKeyDistributionMessage> getSenderKeyDistributionMessage() {
-    return senderKeyDistributionMessage;
-  }
-
-  public Optional<DecryptionErrorMessage> getDecryptionErrorMessage() {
-    return decryptionErrorMessage;
   }
 
   public SignalServiceAddress getSender() {
@@ -353,14 +234,6 @@ public final class SignalServiceContent {
     return needsReceipt;
   }
 
-  public String getServerUuid() {
-    return serverUuid;
-  }
-
-  public Optional<byte[]> getGroupId() {
-    return groupId;
-  }
-
   public byte[] serialize() {
     return serializedState.toByteArray();
   }
@@ -372,7 +245,7 @@ public final class SignalServiceContent {
       SignalServiceContentProto signalServiceContentProto = SignalServiceContentProto.parseFrom(data);
 
       return createFromProto(signalServiceContentProto);
-    } catch (InvalidProtocolBufferException | ProtocolInvalidMessageException | ProtocolInvalidKeyException | UnsupportedDataMessageException | InvalidMessageStructureException e) {
+    } catch (InvalidProtocolBufferException | ProtocolInvalidMessageException | ProtocolInvalidKeyException | UnsupportedDataMessageException e) {
       // We do not expect any of these exceptions if this byte[] has come from serialize.
       throw new AssertionError(e);
     }
@@ -382,7 +255,7 @@ public final class SignalServiceContent {
    * Takes internal protobuf serialization format and processes it into a {@link SignalServiceContent}.
    */
   public static SignalServiceContent createFromProto(SignalServiceContentProto serviceContentProto)
-      throws ProtocolInvalidMessageException, ProtocolInvalidKeyException, UnsupportedDataMessageException, InvalidMessageStructureException
+      throws ProtocolInvalidMessageException, ProtocolInvalidKeyException, UnsupportedDataMessageException
   {
     SignalServiceMetadata metadata     = SignalServiceMetadataProtobufSerializer.fromProtobuf(serviceContentProto.getMetadata());
     SignalServiceAddress  localAddress = SignalServiceAddressProtobufSerializer.fromProtobuf(serviceContentProto.getLocalAddress());
@@ -391,110 +264,60 @@ public final class SignalServiceContent {
       SignalServiceProtos.DataMessage message = serviceContentProto.getLegacyDataMessage();
 
       return new SignalServiceContent(createSignalServiceMessage(metadata, message),
-                                      Optional.absent(),
                                       metadata.getSender(),
                                       metadata.getSenderDevice(),
                                       metadata.getTimestamp(),
                                       metadata.getServerReceivedTimestamp(),
                                       metadata.getServerDeliveredTimestamp(),
                                       metadata.isNeedsReceipt(),
-                                      metadata.getServerGuid(),
-                                      metadata.getGroupId(),
                                       serviceContentProto);
     } else if (serviceContentProto.getDataCase() == SignalServiceContentProto.DataCase.CONTENT) {
-      SignalServiceProtos.Content            message                      = serviceContentProto.getContent();
-      Optional<SenderKeyDistributionMessage> senderKeyDistributionMessage = Optional.absent();
-
-      if (message.hasSenderKeyDistributionMessage()) {
-        try {
-          senderKeyDistributionMessage = Optional.of(new SenderKeyDistributionMessage(message.getSenderKeyDistributionMessage().toByteArray()));
-        } catch (LegacyMessageException | InvalidMessageException e) {
-          Log.w(TAG, "Failed to parse SenderKeyDistributionMessage!", e);
-        }
-      }
+      SignalServiceProtos.Content message = serviceContentProto.getContent();
 
       if (message.hasDataMessage()) {
         return new SignalServiceContent(createSignalServiceMessage(metadata, message.getDataMessage()),
-                                        senderKeyDistributionMessage,
                                         metadata.getSender(),
                                         metadata.getSenderDevice(),
                                         metadata.getTimestamp(),
                                         metadata.getServerReceivedTimestamp(),
                                         metadata.getServerDeliveredTimestamp(),
                                         metadata.isNeedsReceipt(),
-                                        metadata.getServerGuid(),
-                                        metadata.getGroupId(),
                                         serviceContentProto);
       } else if (message.hasSyncMessage() && localAddress.matches(metadata.getSender())) {
         return new SignalServiceContent(createSynchronizeMessage(metadata, message.getSyncMessage()),
-                                        senderKeyDistributionMessage,
                                         metadata.getSender(),
                                         metadata.getSenderDevice(),
                                         metadata.getTimestamp(),
                                         metadata.getServerReceivedTimestamp(),
                                         metadata.getServerDeliveredTimestamp(),
                                         metadata.isNeedsReceipt(),
-                                        metadata.getServerGuid(),
-                                        metadata.getGroupId(),
                                         serviceContentProto);
       } else if (message.hasCallMessage()) {
         return new SignalServiceContent(createCallMessage(message.getCallMessage()),
-                                        senderKeyDistributionMessage,
                                         metadata.getSender(),
                                         metadata.getSenderDevice(),
                                         metadata.getTimestamp(),
                                         metadata.getServerReceivedTimestamp(),
                                         metadata.getServerDeliveredTimestamp(),
                                         metadata.isNeedsReceipt(),
-                                        metadata.getServerGuid(),
-                                        metadata.getGroupId(),
                                         serviceContentProto);
       } else if (message.hasReceiptMessage()) {
         return new SignalServiceContent(createReceiptMessage(metadata, message.getReceiptMessage()),
-                                        senderKeyDistributionMessage,
                                         metadata.getSender(),
                                         metadata.getSenderDevice(),
                                         metadata.getTimestamp(),
                                         metadata.getServerReceivedTimestamp(),
                                         metadata.getServerDeliveredTimestamp(),
                                         metadata.isNeedsReceipt(),
-                                        metadata.getServerGuid(),
-                                        metadata.getGroupId(),
                                         serviceContentProto);
       } else if (message.hasTypingMessage()) {
         return new SignalServiceContent(createTypingMessage(metadata, message.getTypingMessage()),
-                                        senderKeyDistributionMessage,
                                         metadata.getSender(),
                                         metadata.getSenderDevice(),
                                         metadata.getTimestamp(),
                                         metadata.getServerReceivedTimestamp(),
                                         metadata.getServerDeliveredTimestamp(),
                                         false,
-                                        metadata.getServerGuid(),
-                                        metadata.getGroupId(),
-                                        serviceContentProto);
-      } else if (message.hasDecryptionErrorMessage()) {
-        return new SignalServiceContent(createDecryptionErrorMessage(metadata, message.getDecryptionErrorMessage()),
-                                        senderKeyDistributionMessage,
-                                        metadata.getSender(),
-                                        metadata.getSenderDevice(),
-                                        metadata.getTimestamp(),
-                                        metadata.getServerReceivedTimestamp(),
-                                        metadata.getServerDeliveredTimestamp(),
-                                        metadata.isNeedsReceipt(),
-                                        metadata.getServerGuid(),
-                                        metadata.getGroupId(),
-                                        serviceContentProto);
-      } else if (senderKeyDistributionMessage.isPresent()) {
-        return new SignalServiceContent(senderKeyDistributionMessage.get(),
-                                        metadata.getSender(),
-                                        metadata.getSenderDevice(),
-                                        metadata.getTimestamp(),
-                                        metadata.getServerReceivedTimestamp(),
-                                        metadata.getServerDeliveredTimestamp(),
-                                        false,
-                                        metadata.getServerGuid(),
-                                        metadata.getGroupId(),
                                         serviceContentProto);
       }
     }
@@ -504,45 +327,32 @@ public final class SignalServiceContent {
 
   private static SignalServiceDataMessage createSignalServiceMessage(SignalServiceMetadata metadata,
                                                                      SignalServiceProtos.DataMessage content)
-      throws UnsupportedDataMessageException, InvalidMessageStructureException
+      throws ProtocolInvalidMessageException, UnsupportedDataMessageException
   {
+    SignalServiceGroup                  groupInfoV1  = createGroupV1Info(content);
     SignalServiceGroupV2                groupInfoV2  = createGroupV2Info(content);
     Optional<SignalServiceGroupContext> groupContext;
 
     try {
-      groupContext = SignalServiceGroupContext.createOptional(null, groupInfoV2);
+      groupContext = SignalServiceGroupContext.createOptional(groupInfoV1, groupInfoV2);
     } catch (InvalidMessageException e) {
-      throw new InvalidMessageStructureException(e);
+      throw new ProtocolInvalidMessageException(e, null, 0);
     }
 
 
-    List<SignalServiceAttachment>            attachments      = new LinkedList<>();
-    boolean                                  endSession       = ((content.getFlags() & SignalServiceProtos.DataMessage.Flags.END_SESSION_VALUE            ) != 0);
-    boolean                                  expirationUpdate = ((content.getFlags() & SignalServiceProtos.DataMessage.Flags.EXPIRATION_TIMER_UPDATE_VALUE) != 0);
-    boolean                                  profileKeyUpdate = ((content.getFlags() & SignalServiceProtos.DataMessage.Flags.PROFILE_KEY_UPDATE_VALUE     ) != 0);
-    boolean                                  isGroupV2        = groupInfoV2 != null;
-    SignalServiceDataMessage.Quote           quote            = createQuote(content, isGroupV2);
-    List<SharedContact>                      sharedContacts   = createSharedContacts(content);
-    List<SignalServiceDataMessage.Preview>   previews         = createPreviews(content);
-    List<SignalServiceDataMessage.Mention>   mentions         = createMentions(content.getBodyRangesList(), content.getBody(), isGroupV2);
-    SignalServiceDataMessage.Sticker         sticker          = createSticker(content);
-    SignalServiceDataMessage.Reaction        reaction         = createReaction(content);
-    SignalServiceDataMessage.RemoteDelete    remoteDelete     = createRemoteDelete(content);
-    SignalServiceDataMessage.GroupCallUpdate groupCallUpdate  = createGroupCallUpdate(content);
-    SignalServiceDataMessage.StoryContext    storyContext     = createStoryContext(content);
+    List<SignalServiceAttachment>          attachments      = new LinkedList<>();
+    boolean                                endSession       = ((content.getFlags() & SignalServiceProtos.DataMessage.Flags.END_SESSION_VALUE            ) != 0);
+    boolean                                expirationUpdate = ((content.getFlags() & SignalServiceProtos.DataMessage.Flags.EXPIRATION_TIMER_UPDATE_VALUE) != 0);
+    boolean                                profileKeyUpdate = ((content.getFlags() & SignalServiceProtos.DataMessage.Flags.PROFILE_KEY_UPDATE_VALUE     ) != 0);
+    SignalServiceDataMessage.Quote         quote            = createQuote(content);
+    List<SharedContact>                    sharedContacts   = createSharedContacts(content);
+    List<SignalServiceDataMessage.Preview> previews         = createPreviews(content);
+    SignalServiceDataMessage.Sticker       sticker          = createSticker(content);
+    SignalServiceDataMessage.Reaction      reaction         = createReaction(content);
+    SignalServiceDataMessage.RemoteDelete  remoteDelete     = createRemoteDelete(content);
 
     if (content.getRequiredProtocolVersion() > SignalServiceProtos.DataMessage.ProtocolVersion.CURRENT_VALUE) {
       throw new UnsupportedDataMessageProtocolVersionException(SignalServiceProtos.DataMessage.ProtocolVersion.CURRENT_VALUE,
-                                                               content.getRequiredProtocolVersion(),
-                                                               metadata.getSender().getIdentifier(),
-                                                               metadata.getSenderDevice(),
-                                                               groupContext);
-    }
-
-    SignalServiceDataMessage.Payment payment = createPayment(content);
-
-    if (content.getRequiredProtocolVersion() > SignalServiceProtos.DataMessage.ProtocolVersion.CURRENT.getNumber()) {
-      throw new UnsupportedDataMessageProtocolVersionException(SignalServiceProtos.DataMessage.ProtocolVersion.CURRENT.getNumber(),
                                                                content.getRequiredProtocolVersion(),
                                                                metadata.getSender().getIdentifier(),
                                                                metadata.getSenderDevice(),
@@ -554,14 +364,13 @@ public final class SignalServiceContent {
     }
 
     if (content.hasTimestamp() && content.getTimestamp() != metadata.getTimestamp()) {
-      throw new InvalidMessageStructureException("Timestamps don't match: " + content.getTimestamp() + " vs " + metadata.getTimestamp(),
-                                                 metadata.getSender().getIdentifier(),
-                                                 metadata.getSenderDevice());
+      throw new ProtocolInvalidMessageException(new InvalidMessageException("Timestamps don't match: " + content.getTimestamp() + " vs " + metadata.getTimestamp()),
+                                                                            metadata.getSender().getIdentifier(),
+                                                                            metadata.getSenderDevice());
     }
 
     return new SignalServiceDataMessage(metadata.getTimestamp(),
-                                        null,
-                                        groupInfoV2,
+                                        groupInfoV1, groupInfoV2,
                                         attachments,
                                         content.hasBody() ? content.getBody() : null,
                                         endSession,
@@ -572,35 +381,31 @@ public final class SignalServiceContent {
                                         quote,
                                         sharedContacts,
                                         previews,
-                                        mentions,
                                         sticker,
                                         content.getIsViewOnce(),
                                         reaction,
-                                        remoteDelete,
-                                        groupCallUpdate,
-                                        payment,
-                                        storyContext);
+                                        remoteDelete,"");
   }
 
   private static SignalServiceSyncMessage createSynchronizeMessage(SignalServiceMetadata metadata,
                                                                    SignalServiceProtos.SyncMessage content)
-      throws ProtocolInvalidKeyException, UnsupportedDataMessageException, InvalidMessageStructureException
+      throws ProtocolInvalidMessageException, ProtocolInvalidKeyException, UnsupportedDataMessageException
   {
     if (content.hasSent()) {
       Map<SignalServiceAddress, Boolean>   unidentifiedStatuses = new HashMap<>();
       SignalServiceProtos.SyncMessage.Sent sentContent          = content.getSent();
       SignalServiceDataMessage             dataMessage          = createSignalServiceMessage(metadata, sentContent.getMessage());
       Optional<SignalServiceAddress>       address              = SignalServiceAddress.isValidAddress(sentContent.getDestinationUuid(), sentContent.getDestinationE164())
-                                                                  ? Optional.of(new SignalServiceAddress(ACI.parseOrThrow(sentContent.getDestinationUuid()), sentContent.getDestinationE164()))
+                                                                  ? Optional.of(new SignalServiceAddress(UuidUtil.parseOrNull(sentContent.getDestinationUuid()), sentContent.getDestinationE164()))
                                                                   : Optional.<SignalServiceAddress>absent();
 
       if (!address.isPresent() && !dataMessage.getGroupContext().isPresent()) {
-        throw new InvalidMessageStructureException("SyncMessage missing both destination and group ID!");
+        throw new ProtocolInvalidMessageException(new InvalidMessageException("SyncMessage missing both destination and group ID!"), null, 0);
       }
 
       for (SignalServiceProtos.SyncMessage.Sent.UnidentifiedDeliveryStatus status : sentContent.getUnidentifiedStatusList()) {
         if (SignalServiceAddress.isValidAddress(status.getDestinationUuid(), status.getDestinationE164())) {
-          SignalServiceAddress recipient = new SignalServiceAddress(ACI.parseOrThrow(status.getDestinationUuid()), status.getDestinationE164());
+          SignalServiceAddress recipient = new SignalServiceAddress(UuidUtil.parseOrNull(status.getDestinationUuid()), status.getDestinationE164());
           unidentifiedStatuses.put(recipient, status.getUnidentified());
         } else {
           Log.w(TAG, "Encountered an invalid UnidentifiedDeliveryStatus in a SentTranscript! Ignoring.");
@@ -624,7 +429,7 @@ public final class SignalServiceContent {
 
       for (SignalServiceProtos.SyncMessage.Read read : content.getReadList()) {
         if (SignalServiceAddress.isValidAddress(read.getSenderUuid(), read.getSenderE164())) {
-          SignalServiceAddress address = new SignalServiceAddress(ACI.parseOrThrow(read.getSenderUuid()), read.getSenderE164());
+          SignalServiceAddress address = new SignalServiceAddress(UuidUtil.parseOrNull(read.getSenderUuid()), read.getSenderE164());
           readMessages.add(new ReadMessage(address, read.getTimestamp()));
         } else {
           Log.w(TAG, "Encountered an invalid ReadMessage! Ignoring.");
@@ -634,28 +439,13 @@ public final class SignalServiceContent {
       return SignalServiceSyncMessage.forRead(readMessages);
     }
 
-    if (content.getViewedList().size() > 0) {
-      List<ViewedMessage> viewedMessages = new LinkedList<>();
-
-      for (SignalServiceProtos.SyncMessage.Viewed viewed : content.getViewedList()) {
-        if (SignalServiceAddress.isValidAddress(viewed.getSenderUuid(), viewed.getSenderE164())) {
-          SignalServiceAddress address = new SignalServiceAddress(ACI.parseOrThrow(viewed.getSenderUuid()), viewed.getSenderE164());
-          viewedMessages.add(new ViewedMessage(address, viewed.getTimestamp()));
-        } else {
-          Log.w(TAG, "Encountered an invalid ReadMessage! Ignoring.");
-        }
-      }
-
-      return SignalServiceSyncMessage.forViewed(viewedMessages);
-    }
-
     if (content.hasViewOnceOpen()) {
       if (SignalServiceAddress.isValidAddress(content.getViewOnceOpen().getSenderUuid(), content.getViewOnceOpen().getSenderE164())) {
-        SignalServiceAddress address   = new SignalServiceAddress(ACI.parseOrThrow(content.getViewOnceOpen().getSenderUuid()), content.getViewOnceOpen().getSenderE164());
-        ViewOnceOpenMessage  timerRead = new ViewOnceOpenMessage(address, content.getViewOnceOpen().getTimestamp());
+        SignalServiceAddress address   = new SignalServiceAddress(UuidUtil.parseOrNull(content.getViewOnceOpen().getSenderUuid()), content.getViewOnceOpen().getSenderE164());
+        ViewOnceOpenMessage timerRead = new ViewOnceOpenMessage(address, content.getViewOnceOpen().getTimestamp());
         return SignalServiceSyncMessage.forViewOnceOpen(timerRead);
       } else {
-        throw new InvalidMessageStructureException("ViewOnceOpen message has no sender!");
+        throw new ProtocolInvalidMessageException(new InvalidMessageException("ViewOnceOpen message has no sender!"), null, 0);
       }
     }
 
@@ -663,7 +453,7 @@ public final class SignalServiceContent {
       if (SignalServiceAddress.isValidAddress(content.getVerified().getDestinationUuid(), content.getVerified().getDestinationE164())) {
         try {
           SignalServiceProtos.Verified verified    = content.getVerified();
-          SignalServiceAddress         destination = new SignalServiceAddress(ACI.parseOrThrow(verified.getDestinationUuid()), verified.getDestinationE164());
+          SignalServiceAddress destination = new SignalServiceAddress(UuidUtil.parseOrNull(verified.getDestinationUuid()), verified.getDestinationE164());
           IdentityKey identityKey = new IdentityKey(verified.getIdentityKey().toByteArray(), 0);
 
           VerifiedMessage.VerifiedState verifiedState;
@@ -675,9 +465,8 @@ public final class SignalServiceContent {
           } else if (verified.getState() == SignalServiceProtos.Verified.State.UNVERIFIED) {
             verifiedState = VerifiedMessage.VerifiedState.UNVERIFIED;
           } else {
-            throw new InvalidMessageStructureException("Unknown state: " + verified.getState().getNumber(),
-                                                       metadata.getSender().getIdentifier(),
-                                                       metadata.getSenderDevice());
+            throw new ProtocolInvalidMessageException(new InvalidMessageException("Unknown state: " + verified.getState().getNumber()),
+                                                      metadata.getSender().getIdentifier(), metadata.getSenderDevice());
           }
 
           return SignalServiceSyncMessage.forVerified(new VerifiedMessage(destination, identityKey, verifiedState, System.currentTimeMillis()));
@@ -685,7 +474,7 @@ public final class SignalServiceContent {
           throw new ProtocolInvalidKeyException(e, metadata.getSender().getIdentifier(), metadata.getSenderDevice());
         }
       } else {
-        throw new InvalidMessageStructureException("Verified message has no sender!");
+        throw new ProtocolInvalidMessageException(new InvalidMessageException("Verified message has no sender!"), null, 0);
       }
     }
 
@@ -715,6 +504,13 @@ public final class SignalServiceContent {
       List<SignalServiceAddress> addresses = new ArrayList<>(numbers.size() + uuids.size());
       List<byte[]>               groupIds  = new ArrayList<>(content.getBlocked().getGroupIdsList().size());
 
+      for (String e164 : numbers) {
+        Optional<SignalServiceAddress> address = SignalServiceAddress.fromRaw(null, e164);
+        if (address.isPresent()) {
+          addresses.add(address.get());
+        }
+      }
+
       for (String uuid : uuids) {
         Optional<SignalServiceAddress> address = SignalServiceAddress.fromRaw(uuid, null);
         if (address.isPresent()) {
@@ -743,9 +539,8 @@ public final class SignalServiceContent {
 
     if (content.hasFetchLatest() && content.getFetchLatest().hasType()) {
       switch (content.getFetchLatest().getType()) {
-        case LOCAL_PROFILE:       return SignalServiceSyncMessage.forFetchLatest(SignalServiceSyncMessage.FetchType.LOCAL_PROFILE);
-        case STORAGE_MANIFEST:    return SignalServiceSyncMessage.forFetchLatest(SignalServiceSyncMessage.FetchType.STORAGE_MANIFEST);
-        case SUBSCRIPTION_STATUS: return SignalServiceSyncMessage.forFetchLatest(SignalServiceSyncMessage.FetchType.SUBSCRIPTION_STATUS);
+        case LOCAL_PROFILE:    return SignalServiceSyncMessage.forFetchLatest(SignalServiceSyncMessage.FetchType.LOCAL_PROFILE);
+        case STORAGE_MANIFEST: return SignalServiceSyncMessage.forFetchLatest(SignalServiceSyncMessage.FetchType.STORAGE_MANIFEST);
       }
     }
 
@@ -780,37 +575,11 @@ public final class SignalServiceContent {
         if (address.isPresent()) {
           responseMessage = MessageRequestResponseMessage.forIndividual(address.get(), type);
         } else {
-          throw new InvalidMessageStructureException("Message request response has an invalid thread identifier!");
+          throw new ProtocolInvalidMessageException(new InvalidMessageException("Message request response has an invalid thread identifier!"), null, 0);
         }
       }
 
       return SignalServiceSyncMessage.forMessageRequestResponse(responseMessage);
-    }
-
-    if (content.hasOutgoingPayment()) {
-      SignalServiceProtos.SyncMessage.OutgoingPayment outgoingPayment = content.getOutgoingPayment();
-      switch (outgoingPayment.getPaymentDetailCase()) {
-        case MOBILECOIN: {
-          SignalServiceProtos.SyncMessage.OutgoingPayment.MobileCoin mobileCoin = outgoingPayment.getMobileCoin();
-          Money.MobileCoin                                           amount     = Money.picoMobileCoin(mobileCoin.getAmountPicoMob());
-          Money.MobileCoin                                           fee        = Money.picoMobileCoin(mobileCoin.getFeePicoMob());
-          ByteString                                                 address    = mobileCoin.getRecipientAddress();
-          Optional<SignalServiceAddress>                             recipient  = SignalServiceAddress.fromRaw(outgoingPayment.getRecipientUuid(), null);
-
-          return SignalServiceSyncMessage.forOutgoingPayment(new OutgoingPaymentMessage(recipient,
-                                                                                        amount,
-                                                                                        fee,
-                                                                                        mobileCoin.getReceipt(),
-                                                                                        mobileCoin.getLedgerBlockIndex(),
-                                                                                        mobileCoin.getLedgerBlockTimestamp(),
-                                                                                        address.isEmpty() ? Optional.absent() : Optional.of(address.toByteArray()),
-                                                                                        Optional.of(outgoingPayment.getNote()),
-                                                                                        mobileCoin.getOutputPublicKeysList(),
-                                                                                        mobileCoin.getSpentKeyImagesList()));
-        }
-        default:
-          return SignalServiceSyncMessage.empty();
-      }
     }
 
     return SignalServiceSyncMessage.empty();
@@ -822,15 +591,15 @@ public final class SignalServiceContent {
 
     if (content.hasOffer()) {
       SignalServiceProtos.CallMessage.Offer offerContent = content.getOffer();
-      return SignalServiceCallMessage.forOffer(new OfferMessage(offerContent.getId(), offerContent.hasSdp() ? offerContent.getSdp() : null, OfferMessage.Type.fromProto(offerContent.getType()), offerContent.hasOpaque() ? offerContent.getOpaque().toByteArray() : null), isMultiRing, destinationDeviceId);
+      return SignalServiceCallMessage.forOffer(new OfferMessage(offerContent.getId(), offerContent.getDescription(), OfferMessage.Type.fromProto(offerContent.getType())), isMultiRing, destinationDeviceId);
     } else if (content.hasAnswer()) {
       SignalServiceProtos.CallMessage.Answer answerContent = content.getAnswer();
-      return SignalServiceCallMessage.forAnswer(new AnswerMessage(answerContent.getId(), answerContent.hasSdp() ? answerContent.getSdp() : null, answerContent.hasOpaque() ? answerContent.getOpaque().toByteArray() : null), isMultiRing, destinationDeviceId);
+      return SignalServiceCallMessage.forAnswer(new AnswerMessage(answerContent.getId(), answerContent.getDescription()), isMultiRing, destinationDeviceId);
     } else if (content.getIceUpdateCount() > 0) {
       List<IceUpdateMessage> iceUpdates = new LinkedList<>();
 
       for (SignalServiceProtos.CallMessage.IceUpdate iceUpdate : content.getIceUpdateList()) {
-        iceUpdates.add(new IceUpdateMessage(iceUpdate.getId(), iceUpdate.hasOpaque() ? iceUpdate.getOpaque().toByteArray() : null, iceUpdate.hasSdp() ? iceUpdate.getSdp() : null));
+        iceUpdates.add(new IceUpdateMessage(iceUpdate.getId(), iceUpdate.getSdpMid(), iceUpdate.getSdpMLineIndex(), iceUpdate.getSdp()));
       }
 
       return SignalServiceCallMessage.forIceUpdates(iceUpdates, isMultiRing, destinationDeviceId);
@@ -843,9 +612,6 @@ public final class SignalServiceContent {
     } else if (content.hasBusy()) {
       SignalServiceProtos.CallMessage.Busy busy = content.getBusy();
       return SignalServiceCallMessage.forBusy(new BusyMessage(busy.getId()), isMultiRing, destinationDeviceId);
-    } else if (content.hasOpaque()) {
-      SignalServiceProtos.CallMessage.Opaque opaque = content.getOpaque();
-      return SignalServiceCallMessage.forOpaque(new OpaqueMessage(opaque.getData().toByteArray(), null), isMultiRing, destinationDeviceId);
     }
 
     return SignalServiceCallMessage.empty();
@@ -856,21 +622,12 @@ public final class SignalServiceContent {
 
     if      (content.getType() == SignalServiceProtos.ReceiptMessage.Type.DELIVERY) type = SignalServiceReceiptMessage.Type.DELIVERY;
     else if (content.getType() == SignalServiceProtos.ReceiptMessage.Type.READ)     type = SignalServiceReceiptMessage.Type.READ;
-    else if (content.getType() == SignalServiceProtos.ReceiptMessage.Type.VIEWED)   type = SignalServiceReceiptMessage.Type.VIEWED;
     else                                                        type = SignalServiceReceiptMessage.Type.UNKNOWN;
 
     return new SignalServiceReceiptMessage(type, content.getTimestampList(), metadata.getTimestamp());
   }
 
-  private static DecryptionErrorMessage createDecryptionErrorMessage(SignalServiceMetadata metadata, ByteString content) throws InvalidMessageStructureException {
-    try {
-      return new DecryptionErrorMessage(content.toByteArray());
-    } catch (InvalidMessageException e) {
-      throw new InvalidMessageStructureException(e, metadata.getSender().getIdentifier(), metadata.getSenderDevice());
-    }
-  }
-
-  private static SignalServiceTypingMessage createTypingMessage(SignalServiceMetadata metadata, SignalServiceProtos.TypingMessage content) throws InvalidMessageStructureException {
+  private static SignalServiceTypingMessage createTypingMessage(SignalServiceMetadata metadata, SignalServiceProtos.TypingMessage content) throws ProtocolInvalidMessageException {
     SignalServiceTypingMessage.Action action;
 
     if      (content.getAction() == SignalServiceProtos.TypingMessage.Action.STARTED) action = SignalServiceTypingMessage.Action.STARTED;
@@ -878,9 +635,9 @@ public final class SignalServiceContent {
     else                                                          action = SignalServiceTypingMessage.Action.UNKNOWN;
 
     if (content.hasTimestamp() && content.getTimestamp() != metadata.getTimestamp()) {
-      throw new InvalidMessageStructureException("Timestamps don't match: " + content.getTimestamp() + " vs " + metadata.getTimestamp(),
-                                                 metadata.getSender().getIdentifier(),
-                                                 metadata.getSenderDevice());
+      throw new ProtocolInvalidMessageException(new InvalidMessageException("Timestamps don't match: " + content.getTimestamp() + " vs " + metadata.getTimestamp()),
+                                                metadata.getSender().getIdentifier(),
+                                                metadata.getSenderDevice());
     }
 
     return new SignalServiceTypingMessage(action, content.getTimestamp(),
@@ -888,9 +645,7 @@ public final class SignalServiceContent {
                                                                  Optional.<byte[]>absent());
   }
 
-  private static SignalServiceDataMessage.Quote createQuote(SignalServiceProtos.DataMessage content, boolean isGroupV2)
-      throws  InvalidMessageStructureException
-  {
+  private static SignalServiceDataMessage.Quote createQuote(SignalServiceProtos.DataMessage content) throws ProtocolInvalidMessageException {
     if (!content.hasQuote()) return null;
 
     List<SignalServiceDataMessage.Quote.QuotedAttachment> attachments = new LinkedList<>();
@@ -902,20 +657,19 @@ public final class SignalServiceContent {
     }
 
     if (SignalServiceAddress.isValidAddress(content.getQuote().getAuthorUuid(), content.getQuote().getAuthorE164())) {
-      SignalServiceAddress address = new SignalServiceAddress(ACI.parseOrThrow(content.getQuote().getAuthorUuid()), content.getQuote().getAuthorE164());
+      SignalServiceAddress address = new SignalServiceAddress(UuidUtil.parseOrNull(content.getQuote().getAuthorUuid()), content.getQuote().getAuthorE164());
 
       return new SignalServiceDataMessage.Quote(content.getQuote().getId(),
                                                 address,
                                                 content.getQuote().getText(),
-                                                attachments,
-                                                createMentions(content.getQuote().getBodyRangesList(), content.getQuote().getText(), isGroupV2));
+                                                attachments);
     } else {
       Log.w(TAG, "Quote was missing an author! Returning null.");
       return null;
     }
   }
 
-  private static List<SignalServiceDataMessage.Preview> createPreviews(SignalServiceProtos.DataMessage content) throws InvalidMessageStructureException {
+  private static List<SignalServiceDataMessage.Preview> createPreviews(SignalServiceProtos.DataMessage content) throws ProtocolInvalidMessageException {
     if (content.getPreviewCount() <= 0) return null;
 
     List<SignalServiceDataMessage.Preview> results = new LinkedList<>();
@@ -928,42 +682,14 @@ public final class SignalServiceContent {
       }
 
       results.add(new SignalServiceDataMessage.Preview(preview.getUrl(),
-                                                       preview.getTitle(),
-                                                       preview.getDescription(),
-                                                       preview.getDate(),
-                                                       Optional.fromNullable(attachment)));
+                              preview.getTitle(),
+                              Optional.fromNullable(attachment)));
     }
 
     return results;
   }
 
-  private static List<SignalServiceDataMessage.Mention> createMentions(List<SignalServiceProtos.DataMessage.BodyRange> bodyRanges, String body, boolean isGroupV2)
-      throws InvalidMessageStructureException
-  {
-    if (bodyRanges == null || bodyRanges.isEmpty() || body == null) {
-      return null;
-    }
-
-    List<SignalServiceDataMessage.Mention> mentions = new LinkedList<>();
-
-    for (SignalServiceProtos.DataMessage.BodyRange bodyRange : bodyRanges) {
-      if (bodyRange.hasMentionUuid()) {
-        try {
-          mentions.add(new SignalServiceDataMessage.Mention(ACI.parseOrThrow(bodyRange.getMentionUuid()), bodyRange.getStart(), bodyRange.getLength()));
-        } catch (IllegalArgumentException e) {
-          throw new InvalidMessageStructureException("Invalid body range!");
-        }
-      }
-    }
-
-    if (mentions.size() > 0 && !isGroupV2) {
-      throw new InvalidMessageStructureException("Mentions received in non-GV2 message");
-    }
-
-    return mentions;
-  }
-
-  private static SignalServiceDataMessage.Sticker createSticker(SignalServiceProtos.DataMessage content) throws InvalidMessageStructureException {
+  private static SignalServiceDataMessage.Sticker createSticker(SignalServiceProtos.DataMessage content) throws ProtocolInvalidMessageException {
     if (!content.hasSticker()                ||
         !content.getSticker().hasPackId()    ||
         !content.getSticker().hasPackKey()   ||
@@ -976,33 +702,26 @@ public final class SignalServiceContent {
     SignalServiceProtos.DataMessage.Sticker sticker = content.getSticker();
 
     return new SignalServiceDataMessage.Sticker(sticker.getPackId().toByteArray(),
-                                                sticker.getPackKey().toByteArray(),
-                                                sticker.getStickerId(),
-                                                sticker.getEmoji(),
-                                                createAttachmentPointer(sticker.getData()));
+                       sticker.getPackKey().toByteArray(),
+                       sticker.getStickerId(),
+                       createAttachmentPointer(sticker.getData()));
   }
 
   private static SignalServiceDataMessage.Reaction createReaction(SignalServiceProtos.DataMessage content) {
-    if (!content.hasReaction()                           ||
-        !content.getReaction().hasEmoji()                ||
-        !content.getReaction().hasTargetAuthorUuid()     ||
+    if (!content.hasReaction()                                                                        ||
+        !content.getReaction().hasEmoji()                                                             ||
+        !(content.getReaction().hasTargetAuthorE164() || content.getReaction().hasTargetAuthorUuid()) ||
         !content.getReaction().hasTargetSentTimestamp())
     {
       return null;
     }
 
     SignalServiceProtos.DataMessage.Reaction reaction = content.getReaction();
-    ACI                                      uuid     = ACI.parseOrNull(reaction.getTargetAuthorUuid());
-
-    if (uuid == null) {
-      Log.w(TAG, "Cannot parse author UUID on reaction");
-      return null;
-    }
 
     return new SignalServiceDataMessage.Reaction(reaction.getEmoji(),
-                                                 reaction.getRemove(),
-                                                 new SignalServiceAddress(uuid),
-                                                 reaction.getTargetSentTimestamp());
+                        reaction.getRemove(),
+                        new SignalServiceAddress(UuidUtil.parseOrNull(reaction.getTargetAuthorUuid()), reaction.getTargetAuthorE164()),
+                        reaction.getTargetSentTimestamp());
   }
 
   private static SignalServiceDataMessage.RemoteDelete createRemoteDelete(SignalServiceProtos.DataMessage content) {
@@ -1015,58 +734,7 @@ public final class SignalServiceContent {
     return new SignalServiceDataMessage.RemoteDelete(delete.getTargetSentTimestamp());
   }
 
-  private static SignalServiceDataMessage.GroupCallUpdate createGroupCallUpdate(SignalServiceProtos.DataMessage content) {
-    if (!content.hasGroupCallUpdate()) {
-      return null;
-    }
-
-    SignalServiceProtos.DataMessage.GroupCallUpdate groupCallUpdate = content.getGroupCallUpdate();
-
-    return new SignalServiceDataMessage.GroupCallUpdate(groupCallUpdate.getEraId());
-  }
-
-  private static SignalServiceDataMessage.Payment createPayment(SignalServiceProtos.DataMessage content) throws InvalidMessageStructureException {
-    if (!content.hasPayment()) {
-      return null;
-    }
-
-    SignalServiceProtos.DataMessage.Payment payment = content.getPayment();
-
-    switch (payment.getItemCase()) {
-      case NOTIFICATION: return new SignalServiceDataMessage.Payment(createPaymentNotification(payment));
-      default          : throw new InvalidMessageStructureException("Unknown payment item");
-    }
-  }
-
-  private static SignalServiceDataMessage.StoryContext createStoryContext(SignalServiceProtos.DataMessage content) throws InvalidMessageStructureException {
-    if (!content.hasStoryContext()) {
-      return null;
-    }
-
-    ACI aci = ACI.parseOrNull(content.getStoryContext().getAuthorUuid());
-
-    if (aci == null) {
-      throw new InvalidMessageStructureException("Invalid author ACI!");
-    }
-
-    return new SignalServiceDataMessage.StoryContext(aci, content.getStoryContext().getSentTimestamp());
-  }
-
-  private static SignalServiceDataMessage.PaymentNotification createPaymentNotification(SignalServiceProtos.DataMessage.Payment content)
-      throws InvalidMessageStructureException
-  {
-    if (!content.hasNotification() ||
-        content.getNotification().getTransactionCase() != SignalServiceProtos.DataMessage.Payment.Notification.TransactionCase.MOBILECOIN)
-    {
-      throw new InvalidMessageStructureException("Badly-formatted payment notification!");
-    }
-
-    SignalServiceProtos.DataMessage.Payment.Notification payment = content.getNotification();
-
-    return new SignalServiceDataMessage.PaymentNotification(payment.getMobileCoin().getReceipt().toByteArray(), payment.getNote());
-  }
-
-  private static List<SharedContact> createSharedContacts(SignalServiceProtos.DataMessage content) throws InvalidMessageStructureException {
+  private static List<SharedContact> createSharedContacts(SignalServiceProtos.DataMessage content) throws ProtocolInvalidMessageException {
     if (content.getContactCount() <= 0) return null;
 
     List<SharedContact> results = new LinkedList<>();
@@ -1161,7 +829,7 @@ public final class SignalServiceContent {
     return results;
   }
 
-  private static SignalServiceAttachmentPointer createAttachmentPointer(SignalServiceProtos.AttachmentPointer pointer) throws InvalidMessageStructureException {
+  private static SignalServiceAttachmentPointer createAttachmentPointer(SignalServiceProtos.AttachmentPointer pointer) throws ProtocolInvalidMessageException {
     return new SignalServiceAttachmentPointer(pointer.getCdnNumber(),
                                               SignalServiceAttachmentRemoteId.from(pointer),
                                               pointer.getContentType(),
@@ -1171,24 +839,87 @@ public final class SignalServiceContent {
                                               pointer.getWidth(), pointer.getHeight(),
                                               pointer.hasDigest() ? Optional.of(pointer.getDigest().toByteArray()) : Optional.<byte[]>absent(),
                                               pointer.hasFileName() ? Optional.of(pointer.getFileName()) : Optional.<String>absent(),
-                                              (pointer.getFlags() & FlagUtil.toBinaryFlag(SignalServiceProtos.AttachmentPointer.Flags.VOICE_MESSAGE_VALUE)) != 0,
-                                              (pointer.getFlags() & FlagUtil.toBinaryFlag(SignalServiceProtos.AttachmentPointer.Flags.BORDERLESS_VALUE)) != 0,
-                                              (pointer.getFlags() & FlagUtil.toBinaryFlag(SignalServiceProtos.AttachmentPointer.Flags.GIF_VALUE)) != 0,
+                                              (pointer.getFlags() & SignalServiceProtos.AttachmentPointer.Flags.VOICE_MESSAGE_VALUE) != 0,
+                                              (pointer.getFlags() & SignalServiceProtos.AttachmentPointer.Flags.BORDERLESS_VALUE) != 0,
                                               pointer.hasCaption() ? Optional.of(pointer.getCaption()) : Optional.<String>absent(),
                                               pointer.hasBlurHash() ? Optional.of(pointer.getBlurHash()) : Optional.<String>absent(),
                                               pointer.hasUploadTimestamp() ? pointer.getUploadTimestamp() : 0);
 
   }
 
-  private static SignalServiceGroupV2 createGroupV2Info(SignalServiceProtos.DataMessage content) throws InvalidMessageStructureException {
+  private static SignalServiceGroup createGroupV1Info(SignalServiceProtos.DataMessage content) throws ProtocolInvalidMessageException {
+    if (!content.hasGroup()) return null;
+
+    SignalServiceGroup.Type type;
+
+    switch (content.getGroup().getType()) {
+      case DELIVER:      type = SignalServiceGroup.Type.DELIVER;      break;
+      case UPDATE:       type = SignalServiceGroup.Type.UPDATE;       break;
+      case QUIT:         type = SignalServiceGroup.Type.QUIT;         break;
+      case REQUEST_INFO: type = SignalServiceGroup.Type.REQUEST_INFO; break;
+      default:           type = SignalServiceGroup.Type.UNKNOWN;      break;
+    }
+
+    if (content.getGroup().getType() != DELIVER) {
+      String                         name    = null;
+      List<SignalServiceAddress>     members = null;
+      SignalServiceAttachmentPointer avatar  = null;
+
+      if (content.getGroup().hasName()) {
+        name = content.getGroup().getName();
+      }
+
+      if (content.getGroup().getMembersCount() > 0) {
+        members = new ArrayList<>(content.getGroup().getMembersCount());
+
+        for (SignalServiceProtos.GroupContext.Member member : content.getGroup().getMembersList()) {
+          if (SignalServiceAddress.isValidAddress(member.getUuid(), member.getE164())) {
+            members.add(new SignalServiceAddress(UuidUtil.parseOrNull(member.getUuid()), member.getE164()));
+          } else {
+            throw new ProtocolInvalidMessageException(new InvalidMessageException("GroupContext.Member had no address!"), null, 0);
+          }
+        }
+      } else if (content.getGroup().getMembersE164Count() > 0) {
+        members = new ArrayList<>(content.getGroup().getMembersE164Count());
+
+        for (String member : content.getGroup().getMembersE164List()) {
+          members.add(new SignalServiceAddress(null, member));
+        }
+      }
+
+      if (content.getGroup().hasAvatar()) {
+        SignalServiceProtos.AttachmentPointer pointer = content.getGroup().getAvatar();
+
+        avatar = new SignalServiceAttachmentPointer(pointer.getCdnNumber(),
+                                                    SignalServiceAttachmentRemoteId.from(pointer),
+                                                    pointer.getContentType(),
+                                                    pointer.getKey().toByteArray(),
+                                                    Optional.of(pointer.getSize()),
+                                                    Optional.<byte[]>absent(), 0, 0,
+                                                    Optional.fromNullable(pointer.hasDigest() ? pointer.getDigest().toByteArray() : null),
+                                                    Optional.<String>absent(),
+                                                    false,
+                                                    false,
+                                                    Optional.<String>absent(),
+                                                    Optional.<String>absent(),
+                                                    pointer.hasUploadTimestamp() ? pointer.getUploadTimestamp() : 0);
+      }
+
+      return new SignalServiceGroup(type, content.getGroup().getId().toByteArray(), name, members, avatar);
+    }
+
+    return new SignalServiceGroup(content.getGroup().getId().toByteArray());
+  }
+
+  private static SignalServiceGroupV2 createGroupV2Info(SignalServiceProtos.DataMessage content) throws ProtocolInvalidMessageException {
     if (!content.hasGroupV2()) return null;
 
     SignalServiceProtos.GroupContextV2 groupV2 = content.getGroupV2();
     if (!groupV2.hasMasterKey()) {
-      throw new InvalidMessageStructureException("No GV2 master key on message");
+      throw new ProtocolInvalidMessageException(new InvalidMessageException("No GV2 master key on message"), null, 0);
     }
     if (!groupV2.hasRevision()) {
-      throw new InvalidMessageStructureException("No GV2 revision on message");
+      throw new ProtocolInvalidMessageException(new InvalidMessageException("No GV2 revision on message"), null, 0);
     }
 
     SignalServiceGroupV2.Builder builder;
@@ -1196,7 +927,7 @@ public final class SignalServiceContent {
       builder = SignalServiceGroupV2.newBuilder(new GroupMasterKey(groupV2.getMasterKey().toByteArray()))
                                     .withRevision(groupV2.getRevision());
     } catch (InvalidInputException e) {
-      throw new InvalidMessageStructureException("Invalid GV2 input!");
+      throw new ProtocolInvalidMessageException(new InvalidMessageException(e), null, 0);
     }
 
     if (groupV2.hasGroupChange() && !groupV2.getGroupChange().isEmpty()) {

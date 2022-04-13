@@ -14,9 +14,7 @@ public final class Registry extends IssueRegistry {
   public List<Issue> getIssues() {
     return Arrays.asList(SignalLogDetector.LOG_NOT_SIGNAL,
                          SignalLogDetector.LOG_NOT_APP,
-                         SignalLogDetector.INLINE_TAG,
-                         VersionCodeDetector.VERSION_CODE_USAGE,
-                         AlertDialogBuilderDetector.ALERT_DIALOG_BUILDER_USAGE);
+                         SignalLogDetector.INLINE_TAG);
   }
 
   @Override

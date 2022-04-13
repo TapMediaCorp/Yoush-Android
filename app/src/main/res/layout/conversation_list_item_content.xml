@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.tapmedia.yoush.conversationlist.ConversationListItem
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutItem"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:background="?attr/conversation_list_item_background"
+    android:focusable="true"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
+
+    <FrameLayout
+        android:id="@+id/avatar_container"
+        android:layout_width="58dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="2dp">
+
+        <com.tapmedia.yoush.components.AvatarImageView
+            android:id="@+id/contact_photo_image"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:contentDescription="@string/conversation_list_item_view__contact_photo_image"
+            android:foreground="@drawable/contact_photo_background"
+            tools:src="@drawable/ic_contact_picture" />
+
+        <TextView
+            android:id="@+id/unread_indicator"
+            style="@style/Signal.Text.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_gravity="end|top"
+            android:background="?conversation_list_item_unread_background"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:minWidth="20dp"
+            android:padding="4sp"
+            android:textSize="9sp"
+            android:textColor="@color/core_white"
+            tools:text="1" />
+
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="4dp"
+        android:layout_toEndOf="@id/avatar_container"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <com.tapmedia.yoush.components.FromTextView
+            android:id="@+id/from"
+            style="@style/Signal.Text.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="2dp"
+            android:layout_toStartOf="@+id/thumbnail"
+            android:drawablePadding="5dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/roboto"
+            android:maxLines="1"
+            android:textColor="@color/main_color_600"
+            android:textFontWeight="600"
+            tools:text="Jules Bonnot" />
+
+        <com.tapmedia.yoush.components.AlertView
+            android:id="@+id/indicators_parent"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_below="@id/from"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="2dp"
+            android:paddingTop="2dp"
+            android:visibility="gone"
+            app:useSmallIcon="true"
+            tools:visibility="visible" />
+
+        <FrameLayout
+            android:id="@+id/subject_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/from"
+            android:layout_toStartOf="@+id/status"
+            android:layout_toEndOf="@id/indicators_parent"
+            android:paddingEnd="1dp">
+
+            <com.tapmedia.yoush.components.emoji.EmojiTextView
+                android:id="@+id/subject"
+                style="@style/Signal.Text.Preview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/roboto"
+                android:maxLines="1"
+                android:textColor="@color/text_gray_light"
+                tools:text="Wheels arrive at 3pm flat. This is a somewhat longer message." />
+
+            <com.tapmedia.yoush.components.TypingIndicatorView
+                android:id="@+id/typing_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                app:typingIndicator_tint="?conversation_list_typing_tint" />
+
+        </FrameLayout>
+
+        <com.tapmedia.yoush.components.ThumbnailView
+            android:id="@+id/thumbnail"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_toStartOf="@+id/date"
+            android:contentDescription="@string/conversation_activity__attachment_thumbnail"
+            android:visibility="gone"
+            tools:src="@drawable/ic_video_call_light"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@id/date"
+            style="@style/Signal.Text.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/from"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="3dp"
+            android:singleLine="true"
+            android:textColor="?attr/conversation_list_item_date_color"
+            tools:text="30 mins" />
+
+        <TextView
+            android:id="@+id/archived"
+            style="@style/Signal.Text.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/date"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/archived_indicator_background"
+            android:paddingStart="6dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="6dp"
+            android:paddingBottom="2dp"
+            android:text="@string/conversation_list_item_view__archived"
+            android:textColor="@color/core_white" />
+
+
+        <FrameLayout
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_below="@id/date"
+            android:layout_marginTop="4dp"
+            android:layout_toStartOf="@id/archived">
+
+            <com.tapmedia.yoush.components.DeliveryStatusView
+                android:id="@+id/delivery_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                app:iconColor="?attr/conversation_list_item_delivery_icon_color" />
+
+        </FrameLayout>
+
+    </RelativeLayout>
+    <LinearLayout android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/customborder"></LinearLayout>
+
+</com.tapmedia.yoush.conversationlist.ConversationListItem>

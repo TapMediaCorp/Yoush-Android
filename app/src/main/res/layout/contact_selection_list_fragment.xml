@@ -2,9 +2,45 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    style="@style/Fragment.Content"
+    android:id="@+id/layoutContent"
+    tools:ignore="MissingConstraints,HardcodedText">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutAppBar"
+        style="@style/AppBar.Layout">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/viewBack"
+            style="@style/AppBar.Button"
+            android:visibility="gone"
+            android:src="@drawable/ic_arrow_left_conversation_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewAppBar"
+            style="@style/AppBar.Title"
+            android:text="Contacts" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:id="@+id/layoutSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:windowBackground"
+        app:layout_constraintTop_toBottomOf="@+id/layoutAppBar">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/editTextSearch"
+            style="@style/EditText.Search"
+            android:layout_margin="8dp"
+            android:drawableStart="@drawable/ic_search_26"
+            android:hint="@string/search_by_name_or_number" />
+    </FrameLayout>
+
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
@@ -21,7 +57,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:scrollbarThumbVertical="@drawable/contact_selection_scrollbar_thumb"
             android:scrollbars="vertical"
             tools:listitem="@layout/contact_selection_list_item" />
 
@@ -36,7 +71,7 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <org.thoughtcrime.securesms.components.RecyclerViewFastScroller
+    <com.tapmedia.yoush.components.RecyclerViewFastScroller
         android:id="@+id/fast_scroller"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
@@ -111,54 +146,49 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/group_limit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Signal.Body2"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/chipGroupScrollContainer"
+        app:layout_constraintTop_toBottomOf="@id/layoutSearch"
+        tools:text="999/999"
+        tools:visibility="visible" />
+
     <HorizontalScrollView
         android:id="@+id/chipGroupScrollContainer"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:paddingStart="@dimen/dsl_settings_gutter"
-        android:paddingEnd="@dimen/dsl_settings_gutter"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:paddingBottom="8dp"
         android:scrollbars="none"
         android:visibility="gone"
-        android:clipChildren="false"
-        android:clipToPadding="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutSearch"
         tools:visibility="visible">
 
-        <FrameLayout
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroup"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="56dp"
+            android:layout_marginEnd="96dp"
+            android:animateLayoutChanges="true"
+            app:singleLine="true">
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroup"
+            <com.google.android.material.chip.Chip
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="96dp"
-                android:animateLayoutChanges="true"
-                app:singleLine="true">
+                android:visibility="gone"
+                tools:text="Example"
+                tools:visibility="visible" />
 
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    tools:text="Example"
-                    tools:visibility="visible" />
+        </com.google.android.material.chip.ChipGroup>
 
-            </com.google.android.material.chip.ChipGroup>
-        </FrameLayout>
     </HorizontalScrollView>
-
-    <View
-        android:id="@+id/toolbar_shadow"
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:alpha="0"
-        android:background="@drawable/toolbar_shadow"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/swipe_refresh" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="conversation_crimson">#cc163d</color>
-    <color name="conversation_crimson_tint">#eda6ae</color>
-    <color name="conversation_crimson_shade">#8a0f29</color>
+    <color name="conversation_crimson">@color/core_ultramarine</color>
+    <color name="conversation_crimson_tint">#b0c8f9</color>
+    <color name="conversation_crimson_shade">#1851b4</color>
+
+<!--    <color name="conversation_ultramarine">@color/core_ultramarine</color>-->
+<!--    <color name="conversation_ultramarine_tint">#b0c8f9</color>-->
+<!--    <color name="conversation_ultramarine_shade">#1851b4</color>-->
+
+<!--    <color name="conversation_crimson">#cc163d</color>-->
+<!--    <color name="conversation_crimson_tint">#eda6ae</color>-->
+<!--    <color name="conversation_crimson_shade">#8a0f29</color>-->
 
     <color name="conversation_vermillion">#c73800</color>
     <color name="conversation_vermillion_tint">#eba78e</color>

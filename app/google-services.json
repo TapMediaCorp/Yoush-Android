@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "625741656405",
+    "project_id": "testsignalchat",
+    "storage_bucket": "testsignalchat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:625741656405:android:b7e7b6bd111e53fe903fdc",
+        "android_client_info": {
+          "package_name": "com.tapmedia.yoush"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "625741656405-19e0ti20p1e18vrvepijlmnh7oulnffi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZ0cg-NF0gaEDlQIR4bYDVGaLTAZE5qlo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "625741656405-19e0ti20p1e18vrvepijlmnh7oulnffi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

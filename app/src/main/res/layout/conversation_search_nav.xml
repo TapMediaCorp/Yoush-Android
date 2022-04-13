@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.thoughtcrime.securesms.components.ConversationSearchBottomBar
+<com.tapmedia.yoush.components.ConversationSearchBottomBar
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/conversation_search_nav"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/signal_background_primary"
+    android:background="?conversation_background"
     android:visibility="gone"
     tools:visibility="visible"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="37 of 73" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/conversation_search_up"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -39,7 +39,7 @@
         app:layout_constraintEnd_toStartOf="@+id/conversation_search_down"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/conversation_search_down"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -63,11 +63,11 @@
         android:layout_marginBottom="0dp"
         android:indeterminate="true"
         android:padding="8dp"
-        android:background="@color/signal_background_primary"
+        android:background="?conversation_background"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:matProg_barColor="@color/core_grey_25"
         app:matProg_progressIndeterminate="true" />
 
-</org.thoughtcrime.securesms.components.ConversationSearchBottomBar>
+</com.tapmedia.yoush.components.ConversationSearchBottomBar>

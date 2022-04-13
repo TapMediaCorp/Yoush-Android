@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.tapmedia.yoush.ui.widget.AppMotionLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutMotion"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    app:layoutDescription="@xml/motion_conversation_list_item_default"
+    tools:ignore="HardcodedText">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/viewRead"
+        style="@style/ConversationListItem.ButtonLayout"
+        android:background="#A57123"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageViewRead"
+            style="@style/ConversationListItem.ButtonImage"
+            android:src="@drawable/ic_speech_new" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewRead"
+            style="@style/ConversationListItem.ButtonText"
+            android:text="@string/mask_as_unread" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/viewArchive"
+        style="@style/ConversationListItem.ButtonLayout"
+        android:background="#959595"
+        app:layout_constraintEnd_toStartOf="@+id/viewHide"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageViewArchive"
+            style="@style/ConversationListItem.ButtonImage"
+            android:src="@drawable/ic_archive_new" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewArchive"
+            style="@style/ConversationListItem.ButtonText"
+            android:text="@string/archive" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/viewHide"
+        style="@style/ConversationListItem.ButtonLayout"
+        android:background="#A57123"
+        app:layout_constraintEnd_toStartOf="@+id/viewDelete"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageViewHide"
+            style="@style/ConversationListItem.ButtonImage"
+            android:src="@drawable/ic_hide" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textViewHide"
+            style="@style/ConversationListItem.ButtonText"
+            android:text="@string/hide" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/viewDelete"
+        style="@style/ConversationListItem.ButtonLayout"
+        android:background="#CC1111"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            style="@style/ConversationListItem.ButtonImage"
+            android:src="@drawable/ic_trash_new" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            style="@style/ConversationListItem.ButtonText"
+            android:text="@string/delete" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <View
+        android:id="@+id/viewSampleClick"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/conversation_list_item_background"/>
+
+    <include layout="@layout/conversation_list_item_content"/>
+
+</com.tapmedia.yoush.ui.widget.AppMotionLayout>

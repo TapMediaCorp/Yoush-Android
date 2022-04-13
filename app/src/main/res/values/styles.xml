@@ -39,17 +39,6 @@
         <item name="android:windowBackground">@drawable/dialog_background</item>
         <item name="android:textColor">@null</item>
     </style>
-    
-    <style name="TextSecure.Animation.FullScreenDialog" parent="@android:style/Animation.Activity">
-        <item name="android:windowEnterAnimation">@anim/fade_scale_in</item>
-        <item name="android:windowExitAnimation">@anim/fade_scale_out</item>
-    </style>
-
-    <style name="TextSecure.Animation.AddMessageDialog" parent="@android:style/Animation.Activity">
-        <item name="android:windowEnterAnimation">@anim/slide_from_bottom</item>
-        <item name="android:windowExitAnimation">@anim/slide_to_bottom</item>
-    </style>
-
 
     <!-- ActionBar styles -->
     <style name="TextSecure.DarkActionBar"
@@ -71,16 +60,8 @@
         <item name="titleTextStyle">@style/TextSecure.TitleTextStyle</item>
         <item name="subtitleTextStyle">@style/TextSecure.SubtitleTextStyle</item>
         <item name="elevation">0dp</item>
-        <item name="actionOverflowButtonStyle">@style/Signal.Toolbar.Overflow.Light</item>
-        <item name="android:actionOverflowButtonStyle">@style/Signal.Toolbar.Overflow.Light</item>
-    </style>
-
-    <style name="TextSecure.LightActionBar.Settings">
-        <item name="colorControlHighlight">@color/transparent_black_15</item>
-    </style>
-
-    <style name="TextSecure.DarkActionBar.Settings">
-        <item name="colorControlHighlight">@color/transparent_white_15</item>
+        <item name="actionOverflowButtonStyle">@style/Signal.Toolbar.Overflow</item>
+        <item name="android:actionOverflowButtonStyle">@style/Signal.Toolbar.Overflow</item>
     </style>
 
     <style name="TextSecure.LightActionBar.DarkText"
@@ -109,48 +90,28 @@
     </style>
 
     <style name="TextSecure.Conversation.TabBar" parent="@style/Widget.AppCompat.ActionBar.TabBar">
-        <item name="android:textColorPrimary">@color/signal_text_toolbar_title</item>
-        <item name="android:textColorSecondary">@color/signal_text_toolbar_subtitle</item>
+        <item name="android:textColorPrimary">?conversation_title_color</item>
+        <item name="android:textColorSecondary">?conversation_subtitle_color</item>
     </style>
 
     <style name="TextSecure.DarkActionBar.Conversation">
-        <item name="android:popupTheme" tools:ignore="NewApi">@style/Signal.DayNight.Popup</item>
-        <item name="popupTheme">@style/Signal.DayNight.Popup</item>
+        <item name="android:popupTheme" tools:ignore="NewApi">?conversation_popup_theme</item>
+        <item name="popupTheme">?conversation_popup_theme</item>
         <item name="titleTextStyle">@style/TextSecure.TitleTextStyle.Conversation</item>
         <item name="subtitleTextStyle">@style/TextSecure.SubtitleTextStyle.Conversation</item>
         <item name="actionOverflowButtonStyle">@style/Signal.Toolbar.Overflow.Conversation</item>
         <item name="android:actionOverflowButtonStyle">@style/Signal.Toolbar.Overflow.Conversation</item>
         <item name="colorControlHighlight">@color/core_ultramarine</item>
         <item name="android:colorControlHighlight" tools:ignore="NewApi">@color/core_ultramarine</item>
-        <item name="colorControlNormal">@color/signal_text_toolbar_subtitle</item>
-        <item name="android:colorControlNormal" tools:ignore="NewApi">@color/signal_text_toolbar_subtitle</item>
+        <item name="colorControlNormal">?conversation_subtitle_color</item>
+        <item name="android:colorControlNormal" tools:ignore="NewApi">?conversation_subtitle_color</item>
         <item name="colorControlActivated">@color/core_ultramarine</item>
         <item name="android:colorControlActivated" tools:ignore="NewApi">@color/core_ultramarine</item>
     </style>
 
-    <style name="TextSecure.DarkActionBar.ReactionOverlay">
-        <item name="android:popupTheme" tools:ignore="NewApi">@style/Signal.DayNight.Popup</item>
-        <item name="popupTheme">@style/Signal.DayNight.Popup</item>
-        <item name="titleTextStyle">@style/TextSecure.TitleTextStyle</item>
-        <item name="subtitleTextStyle">@style/TextSecure.SubtitleTextStyle</item>
-        <item name="actionOverflowButtonStyle">@style/Signal.Toolbar.Overflow</item>
-        <item name="android:actionOverflowButtonStyle">@style/Signal.Toolbar.Overflow</item>
-        <item name="colorControlHighlight">?colorAccent</item>
-        <item name="android:colorControlHighlight" tools:ignore="NewApi">?colorAccent</item>
-        <item name="colorControlNormal">@color/signal_text_secondary</item>
-        <item name="android:colorControlNormal" tools:ignore="NewApi">@color/signal_text_primary</item>
-        <item name="colorControlActivated">?colorAccent</item>
-        <item name="android:colorControlActivated" tools:ignore="NewApi">?colorAccent</item>
-    </style>
-
-    <style name="Signal.Toolbar.PaymentInfoCard" parent="@style/Widget.AppCompat.ActionBar">
-        <item name="actionOverflowButtonStyle">@style/Signal.Toolbar.Overflow.PaymentCard</item>
-        <item name="android:actionOverflowButtonStyle">@style/Signal.Toolbar.Overflow.PaymentCard</item>
-    </style>
-
     <style name="TextSecure.TitleTextStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textColor">@color/signal_text_primary</item>
-        <item name="android:textColorHint">@color/signal_text_secondary</item>
+        <item name="android:textColor">?attr/title_text_color_primary</item>
+        <item name="android:textColorHint">?attr/title_text_color_secondary</item>
         <item name="android:textSize">16sp</item>
     </style>
 
@@ -165,13 +126,18 @@
     </style>
 
     <style name="TextSecure.TitleTextStyle.Conversation" parent="TextSecure.TitleTextStyle">
-        <item name="android:textColor">@color/signal_text_toolbar_title</item>
-        <item name="android:textColorHint">@color/signal_text_toolbar_subtitle</item>
+        <item name="android:textColor">?conversation_title_color</item>
+        <item name="android:textColorHint">?conversation_subtitle_color</item>
     </style>
 
     <style name="TextSecure.SubtitleTextStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
-        <item name="android:textColor">@color/signal_text_secondary</item>
+        <item name="android:textColor">?attr/title_text_color_secondary</item>
         <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextSecure.SubtitleTextStyleNew" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
+        <item name="android:textColor">?attr/title_text_color_secondary</item>
+        <item name="android:textSize">11sp</item>
     </style>
 
     <style name="TextSecure.SubtitleTextStyle.Dark" parent="TextSecure.SubtitleTextStyle">
@@ -183,7 +149,7 @@
     </style>
 
     <style name="TextSecure.SubtitleTextStyle.Conversation" parent="TextSecure.TitleTextStyle">
-        <item name="android:textColor">@color/signal_text_toolbar_subtitle</item>
+        <item name="android:textColor">?conversation_subtitle_color</item>
     </style>
 
     <style name="Registration.Description" parent="@android:style/TextAppearance">
@@ -263,7 +229,7 @@
         <item name="android:background">@null</item>
         <item name="android:maxLines">5</item>
         <item name="android:maxLength">65536</item>
-        <item name="android:textColor">@color/signal_text_primary</item>
+        <item name="android:textColor">?conversation_item_sent_text_primary_color</item>
         <item name="android:capitalize">sentences</item>
         <item name="android:autoText">true</item>
         <item name="android:gravity">center_vertical</item>
@@ -279,15 +245,15 @@
 
     <style name="Button.Primary" parent="Base.Widget.AppCompat.Button.Colored">
         <item name="colorAccent">@color/core_ultramarine</item>
-        <item name="android:textColor">@color/white</item>
+         <item name="android:layout_height">40dp</item>
+         <item name="android:background">@drawable/rounded_button_primary</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@drawable/rounded_button_text</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 
     <style name="Button.Borderless" parent="Base.Widget.AppCompat.Button.Borderless">
         <item name="android:textColor">?attr/colorAccent</item>
-    </style>
-
-    <style name="Button.Borderless.LowPriority" parent="Button.Borderless">
-        <item name="android:textColor">@color/low_priority_button_text_color</item>
     </style>
 
     <!-- RedPhone -->
@@ -308,8 +274,8 @@
     </style>
 
     <style name="WebRtcCallV2CompoundButton">
-        <item name="android:layout_height">@dimen/webrtc_button_size</item>
-        <item name="android:layout_width">@dimen/webrtc_button_size</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:layout_width">56dp</item>
         <item name="android:textOn">@null</item>
         <item name="android:textOff">@null</item>
     </style>
@@ -317,7 +283,7 @@
     <style name="IdentityKey">
         <item name="android:fontFamily">monospace</item>
         <item name="android:typeface">monospace</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">17sp</item>
         <item name="android:clickable">false</item>
         <item name="android:focusable">false</item>
     </style>
@@ -358,8 +324,14 @@
 
     <style name="Signal.SearchView" parent="Widget.AppCompat.SearchView">
         <item name="closeIcon">@drawable/ic_x_20</item>
-        <item name="searchHintIcon">@drawable/ic_search_24</item>
-        <item name="searchIcon">@drawable/ic_search_24</item>
+        <item name="searchHintIcon">@drawable/ic_search_26</item>
+        <item name="searchIcon">@drawable/ic_search_26</item>
+    </style>
+
+    <style name="Signal.SearchView.Dark">
+        <item name="closeIcon">@drawable/ic_x_conversation_20</item>
+        <item name="searchHintIcon">@drawable/ic_search_conversation_24</item>
+        <item name="searchIcon">@drawable/ic_search_conversation_24</item>
     </style>
 
     <style name="Signal.Toolbar.Overflow" parent="Widget.AppCompat.ActionButton.Overflow">
@@ -368,37 +340,19 @@
         <item name="android:tint">@color/core_white</item>
     </style>
 
-    <style name="Signal.Toolbar.Overflow.Light">
-        <item name="srcCompat">@drawable/ic_more_vert_24</item>
-        <item name="android:src">@null</item>
-        <item name="android:tint">@color/signal_icon_tint_primary</item>
-    </style>
-
     <style name="Signal.Toolbar.Overflow.Conversation">
         <item name="srcCompat">@drawable/ic_more_vert_conversation_24</item>
         <item name="android:tint">@null</item>
     </style>
 
-    <style name="Signal.Toolbar.Overflow.PaymentCard">
-        <item name="android:tint">@color/payment_info_card_overflow_tint</item>
-    </style>
-
     <style name="TextSecure.ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">
-        <item name="titleTextStyle">@style/TextAppearance.Signal.Title.ActionMode</item>
-        <item name="closeItemLayout">@layout/action_mode_close_layout</item>
-        <item name="theme">@style/Signal.ActionModeTheme</item>
-        <item name="android:paddingStart">10dp</item>
-    </style>
-
-    <style name="Signal.ActionModeTheme" parent="ThemeOverlay.AppCompat">
-        <item name="actionOverflowButtonStyle">@style/Signal.DayNight.Toolbar.Overflow</item>
-        <item name="android:actionOverflowButtonStyle">@style/Signal.DayNight.Toolbar.Overflow</item>
+        <item name="titleTextStyle">@style/TextSecure.TitleTextStyle.Conversation</item>
     </style>
 
     <style name="Widget.Signal.ArcProgressBar" parent="">
         <item name="android:layout_width">187dp</item>
         <item name="android:layout_height">187dp</item>
-        <item name="arcBackgroundColor">@color/insight_progress_background</item>
+        <item name="arcBackgroundColor">?insight_progress_background</item>
         <item name="arcForegroundColor">@color/core_ultramarine</item>
         <item name="arcProgress">0.0</item>
         <item name="arcStartAngle">120</item>
@@ -410,6 +364,30 @@
     <declare-styleable name="CameraButtonView">
         <attr name="imageCaptureSize" format="dimension" />
         <attr name="recordSize" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="CameraXView">
+        <attr format="enum" name="scaleType">
+            <enum name="centerCrop" value="0"/>
+            <enum name="centerInside" value="1"/>
+        </attr>
+        <attr format="enum" name="lensFacing">
+            <enum name="none" value="0"/>
+            <enum name="front" value="1"/>
+            <enum name="back" value="2"/>
+        </attr>
+        <attr format="enum" name="captureMode">
+            <enum name="image" value="0"/>
+            <enum name="video" value="1"/>
+            <enum name="mixed" value="2"/>
+        </attr>
+        <attr format="enum" name="flash">
+            <enum name="auto" value="1"/>
+            <enum name="on" value="2"/>
+            <enum name="off" value="4"/>
+        </attr>
+
+        <attr format="boolean" name="pinchToZoomEnabled"/>
     </declare-styleable>
 
     <declare-styleable name="ArcProgressBar">
@@ -426,7 +404,7 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">48dp</item>
-        <item name="android:background">@drawable/message_request_button_background</item>
+        <item name="android:background">?message_request_dialog_button_background</item>
     </style>
 
     <style name="Signal.MessageRequest.Button.Deny">
@@ -478,7 +456,7 @@
 
     <style name="Widget.Signal.CardView.PreferenceRow" parent="Widget.MaterialComponents.CardView">
         <item name="cardCornerRadius">0dp</item>
-        <item name="cardElevation">0dp</item>
+        <item name="cardElevation">0.5dp</item>
         <item name="cardBackgroundColor">?android:attr/windowBackground</item>
     </style>
 
@@ -490,63 +468,218 @@
         <item name="android:insetLeft">0dp</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
-        <item name="android:elevation" tools:ignore="NewApi">0dp</item>
-        <item name="android:stateListAnimator" tools:ignore="NewApi">@null</item>
+        <item name="android:elevation"
+            tools:ignore="NewApi">0dp
+        </item>
+        <item name="android:stateListAnimator"
+            tools:ignore="NewApi">@null
+        </item>
         <item name="iconTint">@color/white</item>
         <item name="iconTintMode">multiply</item>
         <item name="iconPadding">0dp</item>
         <item name="rippleColor">@color/core_ultramarine</item>
-        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Signal.Button.Rounded</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Signal.Button.Rounded
+        </item>
     </style>
 
-    <style name="Widget.Signal.Button.Icon.Circular.Small">
-        <item name="android:layout_width">24dp</item>
-        <item name="android:layout_height">24dp</item>
-        <item name="iconSize">10dp</item>
-        <item name="android:padding">0dp</item>
-        <item name="iconGravity">textStart</item>
-    </style>
-
-    <style name="ShapeAppearanceOverlay.Signal.Button.Rounded" parent="">
+    <style name="ShapeAppearanceOverlay.Signal.Button.Rounded"
+        parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
 
-    <style name="Widget.Signal.Button.Flat" parent="Widget.MaterialComponents.Button.UnelevatedButton">
-        <item name="android:textAllCaps">false</item>
-        <item name="android:insetTop">0dp</item>
-        <item name="android:insetBottom">0dp</item>
+
+
+    <!--WIDGET-->
+    <style name="AppBar" />
+
+    <style name="AppBar.Layout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="layout_constraintStart_toStartOf">parent</item>
+        <item name="layout_constraintTop_toTopOf">parent</item>
     </style>
 
-    <style name="Widget.TimeDurationPicker.Dialog">
-        <item name="durationDisplayBackground">?colorControlActivated</item>
-        <item name="textAppearanceDisplay">@style/TextAppearance.TimeDurationPicker.Display.Large.Dark</item>
-        <item name="textAppearanceUnit">@style/TextAppearance.TimeDurationPicker.Unit.Large.Dark</item>
-        <item name="android:layoutDirection">ltr</item>
+    <style name="AppBar.Avatar">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:scaleType">centerCrop</item>
+       <!-- <item name="android:background">@drawable/drw_oval</item>
+        <item name="android:backgroundTint">@color/colorPrimaryDark</item>-->
+        <item name="android:padding">8dp</item>
+        <item name="layout_constraintStart_toStartOf">parent</item>
+        <item name="layout_constraintTop_toTopOf">parent</item>
+        <item name="layout_constraintBottom_toBottomOf">parent</item>
+        <item name="layout_constraintDimensionRatio">w,1:1</item>
     </style>
 
-    <style name="Widget.Signal.TextInputLayout.FilledBox" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
-        <item name="android:paddingStart">@dimen/dsl_settings_gutter</item>
-        <item name="android:paddingEnd">@dimen/dsl_settings_gutter</item>
-        <item name="boxBackgroundColor">@color/signal_background_secondary</item>
-        <item name="boxCornerRadiusBottomEnd">10dp</item>
-        <item name="boxCornerRadiusBottomStart">10dp</item>
-        <item name="boxCornerRadiusTopEnd">10dp</item>
-        <item name="boxCornerRadiusTopStart">10dp</item>
-        <item name="boxStrokeWidth">0dp</item>
-        <item name="boxStrokeWidthFocused">0dp</item>
-        <item name="hintTextColor">@color/signal_accent_primary</item>
-        <item name="android:textColorHint">@color/signal_text_hint</item>
+    <style name="AppBar.Title" parent="Signal.Text.Body">
+        <item name="android:textColor">@color/white</item>
+        <item name="layout_constraintEnd_toEndOf">parent</item>
+        <item name="layout_constraintStart_toStartOf">parent</item>
+        <item name="layout_constraintTop_toTopOf">parent</item>
+        <item name="layout_constraintBottom_toBottomOf">parent</item>
     </style>
 
-    <style name="Widget.MaterialComponents.Button.TextButton.Dialog">
-        <item name="android:minWidth">@dimen/mtrl_btn_dialog_btn_min_width</item>
-        <!-- Allow buttons to span more than one line so that the end isn't cut
-             off for long strings. MDC defaults to 1 line. -->
-        <item name="android:lines">2</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:layout_marginStart">@dimen/mtrl_btn_text_btn_padding_left</item>
-        <item name="android:layout_gravity">end</item>
-        <item name="android:gravity">end|center_vertical</item>
+    <style name="AppBar.Button">
+        <item name="android:layout_width">?attr/actionBarSize</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:tint">@color/white</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:clickable">true</item>
     </style>
+
+    <style name="EditText" parent="Signal.Text.Body">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:inputType">textEmailAddress</item>
+        <item name="android:textColor">#707070</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColorHint">#707070</item>
+        <item name="android:drawablePadding">4dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:includeFontPadding">true</item>
+        <item name="android:textIsSelectable">false</item>
+        <item name="android:privateImeOptions">nm</item>
+        <item name="android:longClickable">false</item>
+    </style>
+
+    <style name="EditText.Search">
+        <item name="android:layout_height">40dp</item>
+        <item name="android:background">@drawable/rounded_rectangle_dark</item>
+        <item name="android:backgroundTint">#F1F1F1</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:paddingEnd">4dp</item>
+        <item name="android:textColorHint">#929297</item>
+        <item name="android:textColor">#848488</item>
+    </style>
+
+    <style name="RecyclerView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:overScrollMode">never</item>
+        <item name="android:fillViewport">true</item>
+        <item name="android:clipToPadding">false</item>
+        <item name="android:scrollbars">none</item>
+    </style>
+
+    <!--LAYOUT-->
+    <style name="Layout"/>
+
+    <style name="Layout.Content">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">?android:windowBackground</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+    </style>
+
+    <!--FRAGMENT-->
+    <style name="Fragment"/>
+
+    <style name="Fragment.Content">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">?android:windowBackground</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+    </style>
+
+    <!--DIALOG-->
+    <style name="Dialog" />
+
+    <style name="Dialog.FullScreen" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowCloseOnTouchOutside">false</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:statusBarColor">@color/colorWhite</item>
+    </style>
+
+    <!--FRAGMENT-->
+    <style name="ConversationListItem" />
+
+    <style name="ConversationListItem.ButtonLayout">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <style name="ConversationListItem.ButtonImage">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_marginTop">14dp</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="android:tint">@color/white</item>
+        <item name="android:clickable">false</item>
+    </style>
+
+    <style name="ConversationListItem.ButtonText"
+        parent="Signal.Text.Body">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:clickable">false</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:lineSpacingExtra">-3dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!--PIN CODE-->
+    <style name="PinCode" />
+
+    <style name="PinCode.Code">
+        <item name="android:fontFamily">@font/roboto_black</item>
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginStart">4dp</item>
+        <item name="android:layout_marginEnd">4dp</item>
+    </style>
+
+    <style name="CallTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <!--LAYOUT INFO PAGE-->
+    <style name="EditRowInfo">
+        <item name="srcCompat">@drawable/ic_more_vert_24</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:maxLines">1</item>
+<!--        <item name="android:inputType">textEmailAddress</item>-->
+        <item name="android:textColor">#707070</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColorHint">#707070</item>
+        <item name="android:drawablePadding">4dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:includeFontPadding">true</item>
+        <item name="android:textIsSelectable">false</item>
+        <item name="android:privateImeOptions">nm</item>
+        <item name="android:longClickable">false</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
 </resources>

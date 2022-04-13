@@ -19,11 +19,7 @@
 
         <TextView
             android:id="@+id/code_zero"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="@color/signal_inverse_primary"
-            android:textSize="28sp"
+         style="@style/PinCode.Code"
             tools:text="0" />
 
     </FrameLayout>
@@ -41,11 +37,7 @@
 
         <TextView
             android:id="@+id/code_one"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="@color/signal_inverse_primary"
-            android:textSize="28sp"
+            style="@style/PinCode.Code"
             tools:text="1" />
 
     </FrameLayout>
@@ -63,27 +55,10 @@
 
         <TextView
             android:id="@+id/code_two"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="@color/signal_inverse_primary"
-            android:textSize="28sp"
+            style="@style/PinCode.Code"
             tools:text="2" />
 
     </FrameLayout>
-
-    <TextView
-        android:id="@+id/separator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="4dp"
-        android:text="-"
-        android:textColor="@color/signal_inverse_primary"
-        android:textSize="28sp"
-        app:layout_constraintStart_toEndOf="@+id/container_two"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="HardcodedText" />
 
     <FrameLayout
         android:id="@+id/container_three"
@@ -93,16 +68,12 @@
         android:background="@drawable/labeled_edit_text_background_inactive"
         app:layout_constraintDimensionRatio="w,1:1"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/separator"
+        app:layout_constraintStart_toEndOf="@+id/container_two"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/code_three"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="@color/signal_inverse_primary"
-            android:textSize="28sp"
+            style="@style/PinCode.Code"
             tools:text="3" />
 
     </FrameLayout>
@@ -120,11 +91,7 @@
 
         <TextView
             android:id="@+id/code_four"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="@color/signal_inverse_primary"
-            android:textSize="28sp"
+            style="@style/PinCode.Code"
             tools:text="4" />
 
     </FrameLayout>
@@ -142,11 +109,7 @@
 
         <TextView
             android:id="@+id/code_five"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="@color/signal_inverse_primary"
-            android:textSize="28sp"
+            style="@style/PinCode.Code"
             tools:text="5" />
 
     </FrameLayout>

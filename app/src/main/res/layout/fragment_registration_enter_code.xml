@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".registration.fragments.EnterSmsCodeFragment">
+    tools:context=".registration.fragments.EnterCodeFragment">
 
     <ScrollView
         android:id="@+id/scroll_view"
@@ -17,40 +17,39 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:context=".registration.fragments.EnterSmsCodeFragment">
+            tools:context=".registration.fragments.EnterCodeFragment">
 
-            <Button
-                android:id="@+id/wrong_number"
-                style="@style/Button.Borderless.Registration"
+            <com.tapmedia.yoush.components.registration.VerificationCodeView
+                android:id="@+id/viewPinCode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_toEndOf="@id/call_me_count_down"
-                android:text="@string/RegistrationActivity_wrong_number"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="64dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/call_me_count_down"
-                app:layout_constraintTop_toBottomOf="@+id/code" />
-
-            <Button
-                android:id="@+id/no_code"
-                style="@style/Button.Borderless.Registration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_toEndOf="@id/call_me_count_down"
-                android:text="@string/RegistrationActivity_contact_signal_support"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/call_me_count_down"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/wrong_number"
-                tools:visibility="visible" />
+                app:layout_constraintTop_toBottomOf="@+id/verify_title" />
+
+            <TextView
+                android:id="@+id/verify_title"
+                style="@style/Signal.Text.Body.Registration.Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="75dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="75dp"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/verify_header"
+                tools:ignore="MissingConstraints"
+                tools:text="@string/RegistrationActivity_title" />
 
             <TextView
                 android:id="@+id/verify_header"
                 style="@style/Signal.Text.Headline.Registration"
+                android:textSize="25sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -59,84 +58,54 @@
                 android:layout_marginEnd="32dp"
                 android:gravity="center"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="@string/RegistrationActivity_enter_the_code_we_sent_to_s" />
+                tools:text="@string/RegistrationActivity_enter_the_code" />
 
-            <org.thoughtcrime.securesms.components.registration.CallMeCountDownView
-                android:id="@+id/call_me_count_down"
-                style="@style/Button.Borderless.Registration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/code"
-                app:layout_constraintEnd_toStartOf="@+id/wrong_number"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/wrong_number"
-                tools:text="@string/RegistrationActivity_call" />
+<!--            <Button-->
+<!--                android:id="@+id/verify_btn_accept"-->
+<!--                style="@style/Signal.Text.Body.Registration.Accept"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:layout_marginStart="75dp"-->
+<!--                android:layout_marginEnd="75dp"-->
+<!--                android:layout_marginBottom="16dp"-->
+<!--                android:text="@string/RegistrationActivity_btn_accept"-->
 
-            <org.thoughtcrime.securesms.components.registration.VerificationCodeView
-                android:id="@+id/code"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="32dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/verify_header" />
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/code" />-->
 
-            <LinearLayout
-                android:id="@+id/cell_service_warning"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="32dp"
-                android:alpha="0"
-                android:background="@drawable/registration_no_cell_service_warning_border"
-                android:gravity="center"
-                android:paddingStart="8dp"
-                android:paddingTop="4dp"
-                android:paddingEnd="8dp"
-                android:paddingBottom="4dp"
-                android:text="@string/RegistrationActivity_make_sure_your_phone_has_a_cellular_signal"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/no_code"
-                tools:alpha="1"
-                tools:visibility="visible">
+<!--            <com.dd.CircularProgressButton-->
+<!--                android:id="@+id/finish_button"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="50dp"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:layout_marginStart="75dp"-->
+<!--                android:layout_marginEnd="75dp"-->
+<!--                android:layout_marginBottom="16dp"-->
+<!--                android:layout_marginTop="16dp"-->
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="top"
-                    android:layout_margin="2dp"
-                    android:importantForAccessibility="no"
-                    app:tint="@color/core_ultramarine"
-                    app:srcCompat="@drawable/ic_error_outline_14" />
-
-                <TextView
-                    style="@style/Signal.Text.Body.Registration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/RegistrationActivity_make_sure_your_phone_has_a_cellular_signal"
-                    android:textAlignment="center"
-                    android:textColor="@color/core_ultramarine"
-                    android:textSize="12sp" />
-
-            </LinearLayout>
+<!--                android:background="#2E7090"-->
+<!--                android:textSize="18sp"-->
+<!--                android:textColor="@color/white"-->
+<!--                android:textAllCaps="false"-->
+<!--                app:cpb_colorIndicator="@color/white"-->
+<!--                app:cpb_colorProgress="#2E7090"-->
+<!--                app:cpb_cornerRadius="40dp"-->
+<!--                app:cpb_selectorIdle="@drawable/progress_button_state_light"-->
+<!--                app:cpb_textIdle="@string/RegistrationActivity_btn_accept"-->
+<!--                tools:ignore="MissingConstraints" />-->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
 
-    <org.thoughtcrime.securesms.components.registration.VerificationPinKeyboard
-        android:id="@+id/keyboard"
+    <com.tapmedia.yoush.components.registration.VerificationPinKeyboard
+        android:id="@+id/viewKeyboard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

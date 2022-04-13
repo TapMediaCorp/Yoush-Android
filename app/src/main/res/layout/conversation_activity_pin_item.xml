@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.tapmedia.yoush.conversation.pin.ConversationPinItemView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/pinItemView"
+    android:minHeight="64dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <View
+        android:id="@+id/conversationPinSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        android:background="#A5A5A5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/conversationPinTextMessage"
+        style="@style/Signal.Text.Body"
+        android:layout_width="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="6dp"
+        android:ellipsize="end"
+        app:layout_constraintBottom_toTopOf="@+id/conversationPinTextAuthor"
+        android:textColor="#000000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintEnd_toStartOf="@+id/conversationPinThumbnailView"
+        tools:maxLines="1"
+        tools:text="@tools:sample/lorem/random" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/conversationPinTextAuthor"
+        style="@style/Signal.Text.Caption.MessageSent"
+        android:layout_width="0dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/conversationPinTextMessage"
+        app:layout_constraintTop_toBottomOf="@+id/conversationPinTextMessage"
+        tools:maxLines="2"
+        tools:text="@tools:sample/full_names" />
+
+    <com.tapmedia.yoush.components.ThumbnailView
+        android:id="@+id/conversationPinThumbnailView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:adjustViewBounds="true"
+        android:clickable="false"
+        android:contentDescription="@string/conversation_item__mms_image_description"
+        android:longClickable="false"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="w,1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:thumbnail_radius="6dp" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/conversationPinImageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/ic_file"
+        android:padding="8dp"
+        android:tint="#454545"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="w,1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</com.tapmedia.yoush.conversation.pin.ConversationPinItemView>

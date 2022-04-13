@@ -6,19 +6,17 @@ import org.whispersystems.signalservice.internal.push.SignalServiceProtos;
 public class OfferMessage {
 
   private final long   id;
-  private final String sdp;
+  private final String description;
   private final Type   type;
-  private final byte[] opaque;
 
-  public OfferMessage(long id, String sdp, Type type, byte[] opaque) {
-    this.id     = id;
-    this.sdp    = sdp;
-    this.type   = type;
-    this.opaque = opaque;
+  public OfferMessage(long id, String description, Type type) {
+    this.id          = id;
+    this.description = description;
+    this.type        = type;
   }
 
-  public String getSdp() {
-    return sdp;
+  public String getDescription() {
+    return description;
   }
 
   public long getId() {
@@ -27,10 +25,6 @@ public class OfferMessage {
 
   public Type getType() {
     return type;
-  }
-
-  public byte[] getOpaque() {
-    return opaque;
   }
 
   public enum Type {

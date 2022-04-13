@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.tapmedia.yoush.conversation.pin.ConversationPinLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/conversationPinLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="?attr/actionBarSize"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:ignore="HardcodedText">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/conversationPinHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="64dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/rounded_rectangle_white"
+        android:backgroundTint="#EAEAEA"
+        android:clickable="true"
+        android:padding="0dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
+
+        <include
+            layout="@layout/conversation_activity_pin_item"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@+id/linearLayoutCompat"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/linearLayoutCompat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/edit_text_background_inactive"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/conversationPinTextDropdown"
+                style="@style/Signal.Text.Body"
+                android:layout_gravity="center_vertical"
+                android:clickable="false"
+                android:includeFontPadding="false"
+                android:textColor="@color/black"
+                tools:text="   +1" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:clickable="false"
+                android:padding="4dp"
+                android:src="@drawable/ic_keyboard_arrow_down_white_24dp"
+                android:tint="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <View
+            android:id="@+id/conversationPinViewExpand"
+            android:layout_width="70dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <net.cachapa.expandablelayout.ExpandableLayout
+        android:id="@+id/conversationPinExpandableLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:el_duration="1000"
+        app:el_expanded="false"
+        app:el_parallax="0.5"
+        app:layout_constraintEnd_toEndOf="@+id/conversationPinHeader"
+        app:layout_constraintStart_toStartOf="@+id/conversationPinHeader"
+        app:layout_constraintTop_toTopOf="@id/conversationPinHeader"
+        tools:el_expanded="true"
+        tools:layout_marginTop="100dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/conversationPinExpandableView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_rectangle_white"
+            android:backgroundTint="#EAEAEA"
+            android:padding="0dp"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/conversationPinTextItemTitle"
+                style="@style/Signal.Text.Body"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:text="@string/pin_list_title"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/conversationPinRecyclerView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/conversationPinRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                app:layout_constraintTop_toBottomOf="@id/conversationPinTextItemTitle"
+                tools:itemCount="4"
+                tools:listitem="@layout/conversation_activity_pin_item" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </net.cachapa.expandablelayout.ExpandableLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/conversationTextEdit"
+        style="@style/Signal.Text.Body"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:drawableEnd="@drawable/ic_edit"
+        android:drawableTint="@color/white"
+        android:drawablePadding="8dp"
+        android:fontFamily="@font/roboto_black"
+        android:gravity="center_vertical"
+        android:paddingTop="16dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="16dp"
+        android:paddingStart="16dp"
+        android:text="@string/pin_edit"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/conversationPinExpandableLayout"
+        tools:drawableTint="@color/black"
+        tools:textColor="@color/black"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/conversationTextCollapse"
+        style="@style/Signal.Text.Body"
+        android:drawableEnd="@drawable/ic_arrow_up"
+        android:drawableTint="@color/white"
+        android:fontFamily="@font/roboto_black"
+        android:gravity="center_vertical"
+        android:paddingTop="16dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="16dp"
+        android:paddingStart="16dp"
+        android:text="@string/pin_collapse"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/conversationPinExpandableLayout"
+        tools:drawableTint="@color/black"
+        tools:textColor="@color/black"
+        tools:visibility="visible" />
+
+</com.tapmedia.yoush.conversation.pin.ConversationPinLayout>

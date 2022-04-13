@@ -1,33 +1,28 @@
 package org.whispersystems.signalservice.api.storage;
 
 import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
 
 import org.signal.zkgroup.InvalidInputException;
 import org.signal.zkgroup.groups.GroupMasterKey;
-import org.whispersystems.libsignal.logging.Log;
-import org.whispersystems.signalservice.api.util.ProtoUtil;
+import org.whispersystems.signalservice.internal.storage.protos.GroupV1Record;
 import org.whispersystems.signalservice.internal.storage.protos.GroupV2Record;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 
 public final class SignalGroupV2Record implements SignalRecord {
 
-  private static final String TAG = SignalGroupV2Record.class.getSimpleName();
-
-  private final StorageId     id;
-  private final GroupV2Record proto;
-  private final byte[]        masterKey;
-  private final boolean       hasUnknownFields;
+  private final StorageId      id;
+  private final GroupV2Record  proto;
+  private final GroupMasterKey masterKey;
 
   public SignalGroupV2Record(StorageId id, GroupV2Record proto) {
-    this.id               = id;
-    this.proto            = proto;
-    this.hasUnknownFields = ProtoUtil.hasUnknownFields(proto);
-    this.masterKey        = proto.getMasterKey().toByteArray();
+    this.id        = id;
+    this.proto     = proto;
+    try {
+      this.masterKey = new GroupMasterKey(proto.getMasterKey().toByteArray());
+    } catch (InvalidInputException e) {
+      throw new AssertionError(e);
+    }
   }
 
   @Override
@@ -35,73 +30,8 @@ public final class SignalGroupV2Record implements SignalRecord {
     return id;
   }
 
-  @Override
-  public SignalStorageRecord asStorageRecord() {
-    return SignalStorageRecord.forGroupV2(this);
-  }
-
-  @Override
-  public String describeDiff(SignalRecord other) {
-    if (other instanceof SignalGroupV2Record) {
-      SignalGroupV2Record that = (SignalGroupV2Record) other;
-      List<String>        diff = new LinkedList<>();
-
-      if (!Arrays.equals(this.id.getRaw(), that.id.getRaw())) {
-        diff.add("ID");
-      }
-
-      if (!Arrays.equals(this.getMasterKeyBytes(), that.getMasterKeyBytes())) {
-        diff.add("MasterKey");
-      }
-
-      if (!Objects.equals(this.isBlocked(), that.isBlocked())) {
-        diff.add("Blocked");
-      }
-
-      if (!Objects.equals(this.isProfileSharingEnabled(), that.isProfileSharingEnabled())) {
-        diff.add("ProfileSharing");
-      }
-
-      if (!Objects.equals(this.isArchived(), that.isArchived())) {
-        diff.add("Archived");
-      }
-
-      if (!Objects.equals(this.isForcedUnread(), that.isForcedUnread())) {
-        diff.add("ForcedUnread");
-      }
-
-      if (!Objects.equals(this.getMuteUntil(), that.getMuteUntil())) {
-        diff.add("MuteUntil");
-      }
-
-      if (!Objects.equals(this.hasUnknownFields(), that.hasUnknownFields())) {
-        diff.add("UnknownFields");
-      }
-
-      return diff.toString();
-    } else {
-      return "Different class. " + getClass().getSimpleName() + " | " + other.getClass().getSimpleName();
-    }
-  }
-
-  public boolean hasUnknownFields() {
-    return hasUnknownFields;
-  }
-
-  public byte[] serializeUnknownFields() {
-    return hasUnknownFields ? proto.toByteArray() : null;
-  }
-
-  public byte[] getMasterKeyBytes() {
+  public GroupMasterKey getMasterKey() {
     return masterKey;
-  }
-
-  public GroupMasterKey getMasterKeyOrThrow() {
-    try {
-      return new GroupMasterKey(masterKey);
-    } catch (InvalidInputException e) {
-      throw new AssertionError(e);
-    }
   }
 
   public boolean isBlocked() {
@@ -115,15 +45,6 @@ public final class SignalGroupV2Record implements SignalRecord {
   public boolean isArchived() {
     return proto.getArchived();
   }
-
-  public boolean isForcedUnread() {
-    return proto.getMarkedUnread();
-  }
-
-  public long getMuteUntil() {
-    return proto.getMutedUntilTimestamp();
-  }
-
 
   GroupV2Record toProto() {
     return proto;
@@ -147,22 +68,11 @@ public final class SignalGroupV2Record implements SignalRecord {
     private final StorageId             id;
     private final GroupV2Record.Builder builder;
 
-    private byte[] unknownFields;
-
     public Builder(byte[] rawId, GroupMasterKey masterKey) {
-      this(rawId, masterKey.serialize());
-    }
-
-    public Builder(byte[] rawId, byte[] masterKey) {
       this.id      = StorageId.forGroupV2(rawId);
       this.builder = GroupV2Record.newBuilder();
 
-      builder.setMasterKey(ByteString.copyFrom(masterKey));
-    }
-
-    public Builder setUnknownFields(byte[] serializedUnknowns) {
-      this.unknownFields = serializedUnknowns;
-      return this;
+      builder.setMasterKey(ByteString.copyFrom(masterKey.serialize()));
     }
 
     public Builder setBlocked(boolean blocked) {
@@ -180,28 +90,8 @@ public final class SignalGroupV2Record implements SignalRecord {
       return this;
     }
 
-    public Builder setForcedUnread(boolean forcedUnread) {
-      builder.setMarkedUnread(forcedUnread);
-      return this;
-    }
-
-    public Builder setMuteUntil(long muteUntil) {
-      builder.setMutedUntilTimestamp(muteUntil);
-      return this;
-    }
-
     public SignalGroupV2Record build() {
-      GroupV2Record proto = builder.build();
-
-      if (unknownFields != null) {
-        try {
-          proto = ProtoUtil.combineWithUnknownFields(proto, unknownFields);
-        } catch (InvalidProtocolBufferException e) {
-          Log.w(TAG, "Failed to combine unknown fields!", e);
-        }
-      }
-
-      return new SignalGroupV2Record(id, proto);
+      return new SignalGroupV2Record(id, builder.build());
     }
   }
 }

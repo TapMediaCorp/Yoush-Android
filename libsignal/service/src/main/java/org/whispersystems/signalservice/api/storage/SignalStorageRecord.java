@@ -67,16 +67,6 @@ public class SignalStorageRecord implements SignalRecord {
     return id;
   }
 
-  @Override
-  public SignalStorageRecord asStorageRecord() {
-    return this;
-  }
-
-  @Override
-  public String describeDiff(SignalRecord other) {
-    return "Diffs not supported.";
-  }
-
   public int getType() {
     return id.getType();
   }

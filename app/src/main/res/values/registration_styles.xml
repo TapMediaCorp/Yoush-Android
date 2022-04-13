@@ -8,12 +8,13 @@
         <item name="cpb_cornerRadius">4dp</item>
         <item name="cpb_colorIndicator">@color/white</item>
         <item name="cpb_colorProgress">@color/core_ultramarine</item>
-        <item name="cpb_selectorIdle">@drawable/progress_button_state</item>
+        <item name="cpb_selectorIdle">@drawable/progress_button_state_light</item>
     </style>
 
     <style name="Signal.Text.Headline.Registration">
-        <item name="android:textSize">@dimen/registration_headline_text</item>
         <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/text_gray_light</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="Signal.Text.Body.Registration">
@@ -21,7 +22,19 @@
     </style>
 
     <style name="Button.Borderless.Registration">
-        <item name="android:textColor">@color/signal_text_secondary</item>
+        <item name="android:textColor">@color/core_grey_60</item>
+    </style>
+
+    <style name="Signal.Text.Body.Registration.Title">
+        <item name="android:textColor">@color/text_gray_light</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Signal.Text.Body.Registration.Accept">
+        <item name="android:background">#DFA952</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="cpb_cornerRadius">4dp</item>
     </style>
 
 </resources>

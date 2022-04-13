@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <org.thoughtcrime.securesms.components.ThumbnailView
+    <com.tapmedia.yoush.components.ThumbnailView
         android:id="@+id/conversation_thumbnail_image"
         android:layout_width="@dimen/media_bubble_default_dimens"
         android:layout_height="@dimen/media_bubble_default_dimens"
@@ -17,7 +17,7 @@
         tools:visibility="visible"
         app:thumbnail_radius="1dp"/>
 
-    <org.thoughtcrime.securesms.components.AlbumThumbnailView
+    <com.tapmedia.yoush.components.AlbumThumbnailView
         android:id="@+id/conversation_thumbnail_album"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
         android:visibility="gone"
         android:src="@drawable/image_shade" />
 
-    <org.thoughtcrime.securesms.components.ConversationItemFooter
+    <com.tapmedia.yoush.components.ConversationItemFooter
         android:id="@+id/conversation_thumbnail_footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -42,9 +42,8 @@
         android:layout_marginStart="@dimen/message_bubble_horizontal_padding"
         android:layout_marginEnd="@dimen/message_bubble_horizontal_padding"
         android:layout_marginBottom="@dimen/message_bubble_bottom_padding"
-        app:footer_mode="outgoing"
-        app:footer_text_color="@color/signal_text_toolbar_subtitle"
-        app:footer_reveal_dot_color="@color/signal_text_toolbar_subtitle"
-        app:footer_icon_color="@color/signal_text_toolbar_subtitle"/>
+        android:gravity="end"
+        app:footer_text_color="?attr/conversation_subtitle_color"
+        app:footer_icon_color="?attr/conversation_subtitle_color"/>
 
 </merge>

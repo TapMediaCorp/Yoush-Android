@@ -1,0 +1,18 @@
+<network-security-config> 
+   <base-config> 
+      <trust-anchors> 
+         <certificates src="system" /> 
+         <certificates src="user" /> 
+      </trust-anchors> 
+   </base-config> 
+   <domain-config cleartextTrafficPermitted="true"> 
+      <domain includeSubdomains="false">localhost</domain> 
+      <domain includeSubdomains="false">10.0.2.2</domain>
+      <domain includeSubdomains="false">img.youtube.com</domain>
+      <domain includeSubdomains="false">testsignalchat.xyz</domain>
+      <domain includeSubdomains="false">test-signal-chat.s3.amazonaws.com</domain>
+      <domain includeSubdomains="false">d1aimrw9roab2k.cloudfront.net</domain>
+      <domain includeSubdomains="false">storage.signal.org</domain>
+      <domain includeSubdomains="false">test-signal-chat.s3.ap-southeast-1.amazonaws.com</domain>
+   </domain-config> 
+</network-security-config>

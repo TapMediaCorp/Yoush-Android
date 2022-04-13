@@ -12,50 +12,28 @@ public class SignalServiceCallMessage {
   private final Optional<HangupMessage>          hangupMessage;
   private final Optional<BusyMessage>            busyMessage;
   private final Optional<List<IceUpdateMessage>> iceUpdateMessages;
-  private final Optional<OpaqueMessage>          opaqueMessage;
   private final Optional<Integer>                destinationDeviceId;
   private final boolean                          isMultiRing;
-  private final Optional<byte[]>                 groupId;
-  private final Optional<Long>                   timestamp;
 
   private SignalServiceCallMessage(Optional<OfferMessage> offerMessage,
                                    Optional<AnswerMessage> answerMessage,
                                    Optional<List<IceUpdateMessage>> iceUpdateMessages,
                                    Optional<HangupMessage> hangupMessage,
                                    Optional<BusyMessage> busyMessage,
-                                   Optional<OpaqueMessage> opaqueMessage,
                                    boolean isMultiRing,
                                    Optional<Integer> destinationDeviceId)
-  {
-    this(offerMessage, answerMessage, iceUpdateMessages, hangupMessage, busyMessage, opaqueMessage, isMultiRing, destinationDeviceId, Optional.absent(), Optional.absent());
-  }
-
-  private SignalServiceCallMessage(Optional<OfferMessage> offerMessage,
-                                   Optional<AnswerMessage> answerMessage,
-                                   Optional<List<IceUpdateMessage>> iceUpdateMessages,
-                                   Optional<HangupMessage> hangupMessage,
-                                   Optional<BusyMessage> busyMessage,
-                                   Optional<OpaqueMessage> opaqueMessage,
-                                   boolean isMultiRing,
-                                   Optional<Integer> destinationDeviceId,
-                                   Optional<byte[]> groupId,
-                                   Optional<Long> timestamp)
   {
     this.offerMessage        = offerMessage;
     this.answerMessage       = answerMessage;
     this.iceUpdateMessages   = iceUpdateMessages;
     this.hangupMessage       = hangupMessage;
     this.busyMessage         = busyMessage;
-    this.opaqueMessage       = opaqueMessage;
     this.isMultiRing         = isMultiRing;
     this.destinationDeviceId = destinationDeviceId;
-    this.groupId             = groupId;
-    this.timestamp           = timestamp;
   }
 
   public static SignalServiceCallMessage forOffer(OfferMessage offerMessage, boolean isMultiRing, Integer destinationDeviceId) {
     return new SignalServiceCallMessage(Optional.of(offerMessage),
-                                        Optional.absent(),
                                         Optional.absent(),
                                         Optional.absent(),
                                         Optional.absent(),
@@ -70,7 +48,6 @@ public class SignalServiceCallMessage {
                                         Optional.absent(),
                                         Optional.absent(),
                                         Optional.absent(),
-                                        Optional.absent(),
                                         isMultiRing,
                                         Optional.fromNullable(destinationDeviceId));
   }
@@ -79,7 +56,6 @@ public class SignalServiceCallMessage {
     return new SignalServiceCallMessage(Optional.absent(),
                                         Optional.absent(),
                                         Optional.of(iceUpdateMessages),
-                                        Optional.absent(),
                                         Optional.absent(),
                                         Optional.absent(),
                                         isMultiRing,
@@ -95,7 +71,6 @@ public class SignalServiceCallMessage {
                                         Optional.of(iceUpdateMessages),
                                         Optional.absent(),
                                         Optional.absent(),
-                                        Optional.absent(),
                                         isMultiRing,
                                         Optional.fromNullable(destinationDeviceId));
   }
@@ -105,7 +80,6 @@ public class SignalServiceCallMessage {
                                         Optional.absent(),
                                         Optional.absent(),
                                         Optional.of(hangupMessage),
-                                        Optional.absent(),
                                         Optional.absent(),
                                         isMultiRing,
                                         Optional.fromNullable(destinationDeviceId));
@@ -117,39 +91,13 @@ public class SignalServiceCallMessage {
                                         Optional.absent(),
                                         Optional.absent(),
                                         Optional.of(busyMessage),
-                                        Optional.absent(),
                                         isMultiRing,
                                         Optional.fromNullable(destinationDeviceId));
-  }
-
-  public static SignalServiceCallMessage forOpaque(OpaqueMessage opaqueMessage, boolean isMultiRing, Integer destinationDeviceId) {
-    return new SignalServiceCallMessage(Optional.absent(),
-                                        Optional.absent(),
-                                        Optional.absent(),
-                                        Optional.absent(),
-                                        Optional.absent(),
-                                        Optional.of(opaqueMessage),
-                                        isMultiRing,
-                                        Optional.fromNullable(destinationDeviceId));
-  }
-
-  public static SignalServiceCallMessage forOutgoingGroupOpaque(byte[] groupId, long timestamp, OpaqueMessage opaqueMessage, boolean isMultiRing, Integer destinationDeviceId) {
-    return new SignalServiceCallMessage(Optional.absent(),
-                                        Optional.absent(),
-                                        Optional.absent(),
-                                        Optional.absent(),
-                                        Optional.absent(),
-                                        Optional.of(opaqueMessage),
-                                        isMultiRing,
-                                        Optional.fromNullable(destinationDeviceId),
-                                        Optional.of(groupId),
-                                        Optional.of(timestamp));
   }
 
 
   public static SignalServiceCallMessage empty() {
     return new SignalServiceCallMessage(Optional.absent(),
-                                        Optional.absent(),
                                         Optional.absent(),
                                         Optional.absent(),
                                         Optional.absent(),
@@ -178,23 +126,11 @@ public class SignalServiceCallMessage {
     return busyMessage;
   }
 
-  public Optional<OpaqueMessage> getOpaqueMessage() {
-    return opaqueMessage;
-  }
-
   public boolean isMultiRing() {
     return isMultiRing;
   }
 
   public Optional<Integer> getDestinationDeviceId() {
     return destinationDeviceId;
-  }
-
-  public Optional<byte[]> getGroupId() {
-    return groupId;
-  }
-
-  public Optional<Long> getTimestamp() {
-    return timestamp;
   }
 }

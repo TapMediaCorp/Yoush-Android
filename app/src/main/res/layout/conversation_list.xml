@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Fragment.Content"
+    tools:ignore="MissingConstraints,HardcodedText">
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/layoutAppBar"
+      style="@style/AppBar.Layout">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageViewAvatar"
+        style="@style/AppBar.Avatar" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewAppBar"
+        style="@style/AppBar.Title"
+        android:text="@string/app_name" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/viewBack"
+        style="@style/AppBar.Button"
+        android:background="@color/colorPrimary"
+        android:src="@drawable/ic_arrow_left_conversation_24"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/viewCreateConversation"
+        style="@style/AppBar.Button"
+        android:src="@drawable/ic_compose_solid_tinted_25"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/layoutSearch"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="?android:windowBackground"
+      app:layout_constraintTop_toBottomOf="@+id/layoutAppBar">
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/editTextSearch"
+        style="@style/EditText.Search"
+        android:layout_margin="8dp"
+        android:drawableStart="@drawable/ic_search_26"
+        android:hint="@string/SearchToolbar_search_for_conversations_contacts_and_messages"
+        android:paddingEnd="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/viewCloseSearch"
+        android:layout_width="60dp"
+        android:layout_height="0dp"
+        android:src="@drawable/ic_close_grey600_32dp"
+        android:padding="16dp"
+        android:tint="?icon_tint"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+  <com.tapmedia.yoush.components.reminder.ReminderView
+      android:id="@+id/reminder"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintTop_toBottomOf="@+id/layoutSearch" />
+
+  <TextView
+      android:id="@+id/textViewSearchEmpty"
+      style="@style/Signal.Text.Body"
+      android:layout_width="0dp"
+      android:layout_marginStart="32dp"
+      android:layout_marginEnd="32dp"
+      android:background="?attr/search_background"
+      android:gravity="center"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintVertical_bias=".25"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/layoutSearch"
+      tools:text="@string/SearchFragment_no_results" />
+
+  <androidx.recyclerview.widget.RecyclerView
+      android:id="@+id/list"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:clipToPadding="false"
+      android:descendantFocusability="blocksDescendants"
+      android:overScrollMode="never"
+      android:paddingBottom="300dp"
+      android:scrollbars="none"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/reminder"
+      tools:itemCount="2"
+      tools:listitem="@layout/conversation_list_item_default" />
+
+  <androidx.cardview.widget.CardView
+      android:id="@+id/megaphone_container"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="8dp"
+      android:layout_marginEnd="8dp"
+      android:layout_marginBottom="68dp"
+      android:minHeight="54dp"
+      android:visibility="invisible"
+      app:cardBackgroundColor="?megaphone_background"
+      app:contentPadding="0dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
