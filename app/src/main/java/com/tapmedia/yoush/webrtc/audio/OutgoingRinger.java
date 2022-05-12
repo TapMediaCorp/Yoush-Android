@@ -1,16 +1,13 @@
 package com.tapmedia.yoush.webrtc.audio;
 
 import android.content.Context;
-import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
 
 import androidx.annotation.NonNull;
-import com.tapmedia.yoush.logging.Log;
 
 import com.tapmedia.yoush.R;
+import com.tapmedia.yoush.logging.Log;
 
 import java.io.IOException;
 
@@ -43,15 +40,6 @@ public class OutgoingRinger {
     }
 
     mediaPlayer = new MediaPlayer();
-
-    if (Build.VERSION.SDK_INT <= 21) {
-      mediaPlayer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
-    } else {
-      mediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
-                                                        .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
-                                                        .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
-                                                        .build());
-    }
     mediaPlayer.setLooping(true);
 
     String packageName = context.getPackageName();

@@ -32,7 +32,7 @@ import com.google.android.gms.security.ProviderInstaller;
 
 import org.conscrypt.Conscrypt;
 import org.signal.aesgcmprovider.AesGcmProvider;
-//import org.signal.ringrtc.CallManager;
+// import org.signal.ringrtc.CallManager;
 import com.tapmedia.yoush.components.TypingStatusRepository;
 import com.tapmedia.yoush.components.TypingStatusSender;
 import com.tapmedia.yoush.database.DatabaseFactory;
@@ -73,8 +73,8 @@ import com.tapmedia.yoush.util.TextSecurePreferences;
 import com.tapmedia.yoush.util.concurrent.SignalExecutors;
 import com.tapmedia.yoush.util.dynamiclanguage.DynamicLanguageContextWrapper;
 import org.webrtc.audio.JavaAudioDeviceModule;
-import org.webrtc.voiceengine.WebRtcAudioManager;
- import org.webrtc.voiceengine.WebRtcAudioUtils;
+// import org.webrtc.voiceengine.WebRtcAudioManager;
+//  import org.webrtc.voiceengine.WebRtcAudioUtils;
 import org.whispersystems.libsignal.logging.SignalProtocolLoggerProvider;
 
 import java.security.Security;
@@ -338,9 +338,10 @@ public class ApplicationContext extends MultiDexApplication implements DefaultLi
       //          .setUseHardwareAcousticEchoCanceler(false)
       //          .setUseHardwareNoiseSuppressor(false)
       //          .createAudioDeviceModule ();
-       WebRtcAudioUtils.setWebRtcBasedNoiseSuppressor ( true );
-       WebRtcAudioUtils.setWebRtcBasedAcousticEchoCanceler ( true );
-//       WebRtcAudioUtils.setWebRtcBasedAutomaticGainControl ( true );
+      // WebRtcAudioUtils.setWebRtcBasedAcousticEchoCanceler(true);
+      // WebRtcAudioUtils.setWebRtcBasedAutomaticGainControl(true);
+      // WebRtcAudioUtils.setWebRtcBasedNoiseSuppressor(true);
+
 
 //      CallManager.initialize(this, new RingRtcLogger());
     } catch (UnsatisfiedLinkError e) {

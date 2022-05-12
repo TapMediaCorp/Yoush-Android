@@ -314,13 +314,17 @@ public class ConversationUpdateItem extends LinearLayout
         userInfo.setDisplayName(recipient1.getE164().get());
       }
 
-      String jws = Util.getJitsiToken(name);
+      userInfo.setEmail(recipient1.getE164().get() + "@tapofthink.com");
+
+      String jws = Util.getJitsiToken(name, recipient1.getE164().get() + "@tapofthink.com");
+
+      String configOverride = "#config.disableAEC=false&config.p2p.enabled=false&config.disableNS=false";
 
       JitsiMeetConferenceOptions options = null;
       try {
         options = new JitsiMeetConferenceOptions.Builder()
                 .setRoom(roomName)
-                .setServerURL(new URL(""))
+                .setServerURL(new URL("" + configOverride))
                 .setToken(jws)
                 .setUserInfo(userInfo)
                 .setVideoMuted(!isVideo)
@@ -329,12 +333,13 @@ public class ConversationUpdateItem extends LinearLayout
                 .setFeatureFlag("add-people.enabled", false)
                 .setFeatureFlag("invite.enabled", false)
                 .setFeatureFlag("meeting-password.enabled", false)
-
+                
                 .setFeatureFlag("live-streaming.enabled", false)
                 .setFeatureFlag("video-share.enabled", false)
                 .setFeatureFlag("recording.enabled", false)
-                .setConfigOverride("disableAEC", false)
-                .setConfigOverride("p2p.enabled", false)
+                .setFeatureFlag("call-integration.enabled", false)
+                // .setConfigOverride("disableAEC", false)
+                // .setConfigOverride("p2p.enabled", false)
 
 //                .setWelcomePageEnabled(false)
                 .build();

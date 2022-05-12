@@ -170,11 +170,11 @@ public class JitsiService {
                 case PARTICIPANT_LEFT:
                     getParticipantCount(intent,"PARTICIPANT_LEFT");
                     break;
-                case READY_TO_CLOSE:
-                    participantSizeMax = 0;
-                    participantList = new ArrayList<>();
-                    statusEvent = "";
-                    break;
+                // case READY_TO_CLOSE:
+                //     participantSizeMax = 0;
+                //     participantList = new ArrayList<>();
+                //     statusEvent = "";
+                //     break;
 
                 case PARTICIPANTS_INFO_RETRIEVED:
                     participantList = Arrays.asList(event.getData().get("participantsInfo").toString().split("\\}, \\{", -1));
@@ -202,6 +202,9 @@ public class JitsiService {
                             JitsiService obj = new JitsiService();
                             obj.hangUp(context, false);
                         }
+                        participantSizeMax = 0;
+                        participantList = new ArrayList<>();
+                        statusEvent = "";
                     }
 
 
@@ -210,9 +213,6 @@ public class JitsiService {
                             count.cancel();
                             count = null;
                         }
-                        Intent     intent2     = new Intent(context, GroupCallBeginService.class);
-                        intent2.setAction(GroupCallBeginService.ACTION_STOP_RING_OUTCALL);
-                        context.startService(intent2);
                     }
 
 

@@ -1,27 +1,21 @@
 package com.tapmedia.yoush.webrtc.audio;
 
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Vibrator;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.tapmedia.yoush.logging.Log;
 
-import com.tapmedia.yoush.util.ServiceUtil;
+import com.tapmedia.yoush.logging.Log;
 
 import java.io.IOException;
 
 public class IncomingRinger {
 
   private static final String TAG = IncomingRinger.class.getSimpleName();
-
-  private static final long[] VIBRATE_PATTERN = {0, 1000, 1000};
 
   private final Context context;
   private final Vibrator vibrator;
@@ -34,19 +28,11 @@ public class IncomingRinger {
   }
 
   public void start(@Nullable Uri uri, boolean vibrate) {
-    AudioManager audioManager = ServiceUtil.getAudioManager(context);
 
     if (player != null) player.release();
     if (uri != null)    player = createPlayer(uri);
 
-    int ringerMode = audioManager.getRingerMode();
-
-    if (shouldVibrate(context, player, ringerMode, vibrate)) {
-      Log.i(TAG, "Starting vibration");
-      vibrator.vibrate(VIBRATE_PATTERN, 1);
-    }
-
-    if (player != null && ringerMode == AudioManager.RINGER_MODE_NORMAL) {
+    if (player != null) {
       try {
         if (!player.isPlaying()) {
           player.prepare();
@@ -60,7 +46,7 @@ public class IncomingRinger {
         player = null;
       }
     } else {
-      Log.w(TAG, "Not ringing, mode: " + ringerMode);
+      Log.w(TAG, "Not ringing, mode: " + vibrate);
     }
   }
 
@@ -75,34 +61,6 @@ public class IncomingRinger {
     vibrator.cancel();
   }
 
-  private boolean shouldVibrate(Context context, MediaPlayer player, int ringerMode, boolean vibrate) {
-    if (player == null) {
-      return true;
-    }
-
-    return shouldVibrateNew(context, ringerMode, vibrate);
-  }
-
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-  private boolean shouldVibrateNew(Context context, int ringerMode, boolean vibrate) {
-    Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-
-    if (vibrator == null || !vibrator.hasVibrator()) {
-      return false;
-    }
-
-    if (vibrate) {
-      return ringerMode != AudioManager.RINGER_MODE_SILENT;
-    } else {
-      return ringerMode == AudioManager.RINGER_MODE_VIBRATE;
-    }
-  }
-
-  private boolean shouldVibrateOld(Context context, boolean vibrate) {
-    AudioManager audioManager = ServiceUtil.getAudioManager(context);
-    return vibrate && audioManager.shouldVibrate(AudioManager.VIBRATE_TYPE_RINGER);
-  }
-
   private MediaPlayer createPlayer(@NonNull Uri ringtoneUri) {
     try {
       MediaPlayer mediaPlayer = new MediaPlayer();
@@ -110,15 +68,6 @@ public class IncomingRinger {
       mediaPlayer.setOnErrorListener(new MediaPlayerErrorListener());
       mediaPlayer.setDataSource(context, ringtoneUri);
       mediaPlayer.setLooping(true);
-
-      if (Build.VERSION.SDK_INT <= 21) {
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_RING);
-      } else {
-        mediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
-                                                          .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
-                                                          .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION_SIGNALLING)
-                                                          .build());
-      }
 
       return mediaPlayer;
     } catch (IOException e) {

@@ -61,7 +61,7 @@ public abstract class AudioManagerCompat {
     @Override
     public SoundPool createSoundPool() {
       return new SoundPool.Builder()
-                          .setAudioAttributes(AUDIO_ATTRIBUTES)
+                          // .setAudioAttributes(AUDIO_ATTRIBUTES)
                           .setMaxStreams(1)
                           .build();
     }
@@ -118,7 +118,7 @@ public abstract class AudioManagerCompat {
     @Override
     public SoundPool createSoundPool() {
       return new SoundPool.Builder()
-                          .setAudioAttributes(AUDIO_ATTRIBUTES)
+                          // .setAudioAttributes(AUDIO_ATTRIBUTES)
                           .setMaxStreams(1)
                           .build();
     }

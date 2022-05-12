@@ -29,7 +29,6 @@ import com.tapmedia.yoush.util.Util;
 import com.tapmedia.yoush.webrtc.CallNotificationBuilder;
 import com.tapmedia.yoush.webrtc.audio.OutgoingRinger;
 import com.tapmedia.yoush.webrtc.audio.SignalAudioManager;
-import com.tapmedia.yoush.webrtc.locks.LockManager;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -39,9 +38,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static com.tapmedia.yoush.webrtc.CallNotificationBuilder.TYPE_ESTABLISHED;
-import static com.tapmedia.yoush.webrtc.CallNotificationBuilder.TYPE_INCOMING_CONNECTING;
 import static com.tapmedia.yoush.webrtc.CallNotificationBuilder.TYPE_INCOMING_RINGING;
-import static com.tapmedia.yoush.webrtc.CallNotificationBuilder.TYPE_OUTGOING_RINGING;
 
 public class GroupCallBeginService extends Service implements MainNavigator.BackHandler
 {
@@ -81,7 +78,6 @@ public class GroupCallBeginService extends Service implements MainNavigator.Back
   };
 
   private final ExecutorService serviceExecutor = Executors.newSingleThreadExecutor();
-  private LockManager                     lockManager;
   private SignalAudioManager              audioManager;
 
   @Nullable private RemotePeer          activePeer;
@@ -233,7 +229,7 @@ public class GroupCallBeginService extends Service implements MainNavigator.Back
   }
 
   private void handleStopRingOutCall(Intent intent) {
-    audioManager.stop(false);
+    audioManager.stop();
   }
 
   private void sendMessage(@NonNull WebRtcViewModel.State state,
@@ -271,32 +267,13 @@ public class GroupCallBeginService extends Service implements MainNavigator.Back
 //    }
 
     remotePeer.dialing();
-
     activePeer = remotePeer;
-
-
-
-    Log.i(TAG, "handleOutgoingCall():");
-
-    audioManager.initializeAudioForCall();
-    audioManager.startOutgoingRinger(OutgoingRinger.Type.RINGING);
-//    EventBus.getDefault().removeStickyEvent(WebRtcViewModel.class);
-//
-//    initializeVideo();
-
-//    OfferMessage.Type         offerType     = OfferMessage.Type.fromCode(intent.getStringExtra(EXTRA_OFFER_TYPE));
-//    CallManager.CallMediaType callMediaType = getCallMediaTypeFromOfferType(offerType);
-
-//    try {
-//      callManager.call(remotePeer, callMediaType, 1);
-//    } catch  (CallException e) {
-//      callFailure("Unable to create outgoing call: ", e);
-//    }
   }
 
   private void handleAnswerCall(Intent intent) {
 //    RemotePeer        remotePeer                  = getRemotePeer(intent);
 //    remotePeer.handleIdle();
+    audioManager.stop();
     activePeer.dialing();
 
     count.cancel();
@@ -315,11 +292,15 @@ public class GroupCallBeginService extends Service implements MainNavigator.Back
         userInfo.setDisplayName(recipient1.getE164().get());
       }
 
-      String jws = Util.getJitsiToken(name);
+      userInfo.setEmail(recipient1.getE164().get() + "@tapofthink.com");
+
+      String jws = Util.getJitsiToken(name, recipient1.getE164().get() + "@tapofthink.com");
+
+      String configOverride = "#config.disableAEC=false&config.p2p.enabled=false&config.disableNS=false";
 
       options = new JitsiMeetConferenceOptions.Builder()
               .setRoom(roomName)
-              .setServerURL(new URL(""))
+              .setServerURL(new URL("" + configOverride))
               .setToken(jws)
               .setUserInfo(userInfo)
               .setVideoMuted(Boolean.parseBoolean(audioOnly))
@@ -331,8 +312,9 @@ public class GroupCallBeginService extends Service implements MainNavigator.Back
               .setFeatureFlag("live-streaming.enabled", false)
               .setFeatureFlag("video-share.enabled", false)
               .setFeatureFlag("recording.enabled", false)
-              .setConfigOverride("disableAEC", false)
-              .setConfigOverride("p2p.enabled", false)
+              .setFeatureFlag("call-integration.enabled", false)
+              // .setConfigOverride("disableAEC", false)
+              // .setConfigOverride("p2p.enabled", false)
               .build();
     } catch (MalformedURLException | UnsupportedEncodingException e) {
       e.printStackTrace();
@@ -341,6 +323,7 @@ public class GroupCallBeginService extends Service implements MainNavigator.Back
   }
 
   private void handleDenyCallButton(Intent intent) {
+    audioManager.stop();
     if ("call".equals(messageType)) {
       String callState = "endCall";
       String          callObject        = "{\"messageType\":\"call\", \"room\": \""+roomName+"\", \"message\": \"Cuộc gọi\", \"state\": \""+callState+"\", \"subject\": \""+subject+"\", \"callId\": \""+callId+"\", \"audioOnly\":\""+false+"\"}";
@@ -368,7 +351,7 @@ public class GroupCallBeginService extends Service implements MainNavigator.Back
   }
 
   private void handleDenyCall(Intent intent) {
-
+    audioManager.stop();
     if (activePeer != null) {
       if (activePeer.getState() != CallState.TERMINATED) {
        DatabaseFactory.getSmsDatabase(this).insertMissedCall(activePeer.getId());
@@ -395,19 +378,11 @@ public class GroupCallBeginService extends Service implements MainNavigator.Back
 //      return;
     }
 
-    lockManager.updatePhoneState(LockManager.PhoneState.PROCESSING);
 
     sendMessage(WebRtcViewModel.State.CALL_DECLINED_ELSEWHERE);
 
 
     stopForeground(true);
-//    boolean playDisconnectSound = (activePeer.getState() == CallState.DIALING)        ||
-//            (activePeer.getState() == CallState.REMOTE_RINGING) ||
-//            (activePeer.getState() == CallState.RECEIVED_BUSY)  ||
-//            (activePeer.getState() == CallState.CONNECTED);
-    audioManager.stop(false);
-
-    lockManager.updatePhoneState(LockManager.PhoneState.IDLE);
   }
 
   @Override
@@ -416,17 +391,9 @@ public class GroupCallBeginService extends Service implements MainNavigator.Back
     Log.i(TAG, "onCreate");
 
     initializeResources();
-
-//    registerIncomingPstnCallReceiver();
-//    registerUncaughtExceptionHandler();
-//    registerWiredHeadsetStateReceiver();
-//
-//    TelephonyUtil.getManager(this)
-//            .listen(hangUpRtcOnDeviceCallAnswered, PhoneStateListener.LISTEN_CALL_STATE);
   }
 
   private void initializeResources() {
-    this.lockManager           = new LockManager(this);
     this.audioManager          = new SignalAudioManager(this);
 
   }
@@ -504,6 +471,13 @@ public class GroupCallBeginService extends Service implements MainNavigator.Back
   }
 
   private void dialingCall (Intent intent, RemotePeer remotePeer) {
+
+    Recipient  recipient  = remotePeer.getRecipient();
+    Uri          ringtone     = recipient.resolve().getCallRingtone();
+    VibrateState vibrateState = recipient.resolve().getCallVibrate();
+    if (ringtone == null) ringtone = TextSecurePreferences.getCallNotificationRingtone(this);
+    audioManager.startIncomingRinger(ringtone, vibrateState == VibrateState.ENABLED || (vibrateState == VibrateState.DEFAULT && TextSecurePreferences.isCallNotificationVibrateEnabled(this)));
+
     roomName = intent.getStringExtra(ROOM_NAME);
     groupName = intent.getStringExtra(GROUP_NAME);
     senderName = intent.getStringExtra(SENDER_NAME);
@@ -522,58 +496,14 @@ public class GroupCallBeginService extends Service implements MainNavigator.Back
     System.out.println(remotePeer.getRecipient());
     System.out.println("------------------------------------------------------------------------------------------");
 
-    Recipient  recipient  = remotePeer.getRecipient();
-
     remotePeer.localRingingCallGroup();
-    lockManager.updatePhoneState(LockManager.PhoneState.INTERACTIVE);
 
 //    sendMessage(WebRtcViewModel.State.CALL_INCOMING, activePeer, localCameraState, remoteVideoEnabled, bluetoothAvailable, microphoneEnabled, isRemoteVideoOffer);
     sendMessage(WebRtcViewModel.State.CALL_INCOMING,remotePeer);
-    boolean shouldDisturbUserWithCall = DoNotDisturbUtil.shouldDisturbUserWithCall(getApplicationContext(), recipient);
-
-    //    RemotePeer remotePeer = getRemotePeer(intent);
-
-//    Log.i(TAG, "handleLocalRinging(): call_id: " + remotePeer.getCallId());
-
-    if (!remotePeer.callIdEquals(activePeer)) {
-      Log.w(TAG, "handleLocalRinging(): Ignoring for inactive call.");
-//      return;
-    }
-
-    audioManager.initializeAudioForCall();
-    if (shouldDisturbUserWithCall && TextSecurePreferences.isCallNotificationsEnabled(this)) {
-      Uri          ringtone     = recipient.resolve().getCallRingtone();
-      VibrateState vibrateState = recipient.resolve().getCallVibrate();
-
-      if (ringtone == null) ringtone = TextSecurePreferences.getCallNotificationRingtone(this);
-
-      audioManager.startIncomingRinger(ringtone, vibrateState == VibrateState.ENABLED || (vibrateState == VibrateState.DEFAULT && TextSecurePreferences.isCallNotificationVibrateEnabled(this)));
-    }
-
-//    registerPowerButtonReceiver();
-
-    boolean isAppOpen = false;
-//    if (shouldDisturbUserWithCall) {
-//      isAppOpen = startCallCardActivityIfPossible();
-//    }
 
     startCallCardActivityIfPossible();
-
-//    if (ApplicationContext.getInstance(getApplicationContext()).isAppVisible()) {
-//      Intent activityIntent = new Intent();
-//      activityIntent.setClass(this, GroupCallBeginActivity.class);
-//      activityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//              .putExtra(GroupCallBeginActivity.ROOM_NAME, activityIntent.getStringExtra(ROOM_NAME))
-//              .putExtra(GroupCallBeginActivity.GROUP_NAME, activityIntent.getStringExtra(GROUP_NAME))
-//              .putExtra(GroupCallBeginActivity.SENDER_NAME, activityIntent.getStringExtra(SENDER_NAME))
-//      ;
-//      this.startActivity(activityIntent);
-//    }
-
-//    if (!isAppOpen) {
-      startForeground(CallNotificationBuilder.getNotificationIdCallGroup(),
+    startForeground(CallNotificationBuilder.getNotificationIdCallGroup(),
               CallNotificationBuilder.getCallInProgressNotificationCallGroup(this, type, remotePeer.getRecipient(), intent));
-//    }
   }
 
   private void startCallCardActivityIfPossible() {

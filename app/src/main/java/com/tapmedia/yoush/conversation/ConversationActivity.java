@@ -975,15 +975,19 @@ public class ConversationActivity extends PassphraseRequiredActivity
             userInfo.setDisplayName(recipient1.getE164().get());
           }
 
+          userInfo.setEmail(recipient1.getE164().get() + "@tapofthink.com");
+
           String nameTo = recipientSnapshot.getName(this);
           boolean isVideo = false;
 
-          String jws = Util.getJitsiToken(name);
+          String jws = Util.getJitsiToken(name, recipient1.getE164().get() + "@tapofthink.com");
+
+          String configOverride = "#config.disableAEC=false&config.p2p.enabled=false&config.disableNS=false";
 
           roomName = roomName.replaceAll("!","");
           JitsiMeetConferenceOptions options = new JitsiMeetConferenceOptions.Builder()
                   .setRoom(roomName)
-                  .setServerURL(new URL(""))
+                  .setServerURL(new URL("" + configOverride))
                   .setToken(jws)
                   .setUserInfo(userInfo)
                   .setVideoMuted(!isVideo)
@@ -996,10 +1000,10 @@ public class ConversationActivity extends PassphraseRequiredActivity
                   .setFeatureFlag("live-streaming.enabled", false)
                   .setFeatureFlag("video-share.enabled", false)
                   .setFeatureFlag("recording.enabled", false)
-
+                  .setFeatureFlag("call-integration.enabled", false)
                   .setFeatureFlag("name.to", nameTo)
-                  .setConfigOverride("disableAEC", false)
-                  .setConfigOverride("p2p.enabled", false)
+//                  .setConfigOverride("disableAEC", false)
+//                  .setConfigOverride("p2p.enabled", false)
 
   //                  .setWelcomePageEnabled(false)
                   .build();
@@ -3393,13 +3397,17 @@ public class ConversationActivity extends PassphraseRequiredActivity
             userInfo.setDisplayName(recipient1.getE164().get());
           }
 
-          String jws = Util.getJitsiToken(name);
+          userInfo.setEmail(recipient1.getE164().get() + "@tapofthink.com");
+
+          String jws = Util.getJitsiToken(name, recipient1.getE164().get() + "@tapofthink.com");
 
           Boolean isScreenSecurityEnabled = TextSecurePreferences.isScreenSecurityEnabled(this);
 
+          String configOverride = "#config.disableAEC=false&config.p2p.enabled=false&config.disableNS=false";
+
           JitsiMeetConferenceOptions options = new JitsiMeetConferenceOptions.Builder()
                   .setRoom(roomName)
-                  .setServerURL(new URL(""))
+                  .setServerURL(new URL("" + configOverride))
                   .setToken(jws)
                   .setUserInfo(userInfo)
                   .setVideoMuted(!isVideo)
@@ -3412,10 +3420,10 @@ public class ConversationActivity extends PassphraseRequiredActivity
                   .setFeatureFlag("live-streaming.enabled", false)
                   .setFeatureFlag("video-share.enabled", false)
                   .setFeatureFlag("recording.enabled", false)
-
+                  .setFeatureFlag("call-integration.enabled", false)
                   .setFeatureFlag("name.to", nameTo)
-                  .setConfigOverride("disableAEC", false)
-                  .setConfigOverride("p2p.enabled", false)
+                  // .setConfigOverride("disableAEC", false)
+                  // .setConfigOverride("p2p.enabled", false)
 
 //                  .setWelcomePageEnabled(false)
                   .build();
@@ -3430,8 +3438,6 @@ public class ConversationActivity extends PassphraseRequiredActivity
       Toast.makeText(ConversationActivity.this, R.string.ConversationActivity_message_is_empty_exclamation,
               Toast.LENGTH_SHORT).show();
       Log.w(TAG, ex);
-    } catch (IOException e) {
-      e.printStackTrace();
     }
   }
 
